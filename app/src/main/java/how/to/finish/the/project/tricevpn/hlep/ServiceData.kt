@@ -9,34 +9,34 @@ object ServiceData {
     //本地买量数据
     const val local_yep_data = """
         {
-    "onLleav": 1,
-    "onLeate": 2,
-    "onLmill": 2,
-    "onLage": 2,
-    "onLiden": 2,
-    "onLclem": 2,
-    "onLisp": 2
+    "dineyrh": 1,
+    "tempyrh": 2,
+    "calyrh": 2,
+    "hisyrh": 2,
+    "pteryrh": 2,
+    "oeeryrh": 2,
+    "adoryrh": 2
 }
     """
     //本地广告逻辑
     const val local_yep_logic = """
 {
-    "onLmatt": "2",
-    "onLprob": "2",
-    "onLfeli": "2"
+    "coronyer": "2",
+    "lieayer": "2",
+    "toryyer": "2"
 }    """
     val local_ad_data = """
 {
-  "open":"ca-app-pub-3940256099942544/9257395921",
-  "home":"ca-app-pub-3940256099942544/2247696110",
-  "end":"ca-app-pub-3940256099942544/2247696110",
-  "connect":"ca-app-pub-3940256099942544/8691691433",
-  "back":"ca-app-pub-3940256099942544/1033173712"
+  "ousyet":"ca-app-pub-3940256099942544/9257395921",
+  "bedyet":"ca-app-pub-3940256099942544/2247696110",
+  "queyet":"ca-app-pub-3940256099942544/2247696110",
+  "tranyet":"ca-app-pub-3940256099942544/8691691433",
+  "furtyet":"ca-app-pub-3940256099942544/1033173712"
 }
     """.trimIndent()
 
     val ss_vpn_list = """
-        WwogICAgewogICAgICAgICJnZ19hX2EiOiAiajl4S0RKZDcxdXJFUGJneWxjNjJCWkgiLAogICAgICAgICJnZ19hX3kiOiAiY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSIsCiAgICAgICAgImdnX2FfYiI6ICI5NjQxIiwKICAgICAgICAiZ2dfYV9wIjogIlVuaXRlZCBTdGF0ZXMiLAogICAgICAgICJnZ19hX2MiOiAiTWlhbWkiLAogICAgICAgICJnZ19hX28iOiAiNDMuMjMxLjIzNC44MSIKICAgIH0sCiAgICB7CiAgICAgICAgImdnX2FfYSI6ICJqOXhLREpkNzF1ckVQYmd5bGM2MkJaSCIsCiAgICAgICAgImdnX2FfeSI6ICJjaGFjaGEyMC1pZXRmLXBvbHkxMzA1IiwKICAgICAgICAiZ2dfYV9iIjogIjk2NDIiLAogICAgICAgICJnZ19hX3AiOiAiR2VybWFueSIsCiAgICAgICAgImdnX2FfYyI6ICJGcmFua2Z1cnQiLAogICAgICAgICJnZ19hX28iOiAiNDMuMjMxLjIzNC44MiIKICAgIH0sCiAgICB7CiAgICAgICAgImdnX2FfYSI6ICJqOXhLREpkNzF1ckVQYmd5bGM2MkJaSCIsCiAgICAgICAgImdnX2FfeSI6ICJjaGFjaGEyMC1pZXRmLXBvbHkxMzA1IiwKICAgICAgICAiZ2dfYV9iIjogIjk2NDMiLAogICAgICAgICJnZ19hX3AiOiAia29yZWFzb3V0aCIsCiAgICAgICAgImdnX2FfYyI6ICJTZW91bCIsCiAgICAgICAgImdnX2FfbyI6ICI0My4yMzEuMjM0LjgzIgogICAgfSwKICAgIHsKICAgICAgICAiZ2dfYV9hIjogImo5eEtESmQ3MXVyRVBiZ3lsYzYyQlpIIiwKICAgICAgICAiZ2dfYV95IjogImNoYWNoYTIwLWlldGYtcG9seTEzMDUiLAogICAgICAgICJnZ19hX2IiOiAiOTY0NCIsCiAgICAgICAgImdnX2FfcCI6ICJTaW5nYXBvcmUiLAogICAgICAgICJnZ19hX2MiOiAiU2luZ2Fwb3JlIiwKICAgICAgICAiZ2dfYV9vIjogIjQzLjIzMS4yMzQuODQiCiAgICB9Cl0=
+        WwogICAgewogICAgICAgICJ3ZXJ5ZXAiOiAiajl4S0RKZDcxdXJFUGJneWxjNjJCWkgiLAogICAgICAgICJ1cmV5ZXAiOiAiY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSIsCiAgICAgICAgImFycnllcCI6ICI5NjQxIiwKICAgICAgICAidmVyeXllcCI6ICJVbml0ZWQgU3RhdGVzIiwKICAgICAgICAic2NpZW50eWVwIjogIk1pYW1pIiwKICAgICAgICAic3RmdWx5ZXAiOiAiNDMuMjMxLjIzNC44MSIKICAgIH0sCiAgICB7CiAgICAgICAgIndlcnllcCI6ICJqOXhLREpkNzF1ckVQYmd5bGM2MkJaSCIsCiAgICAgICAgInVyZXllcCI6ICJjaGFjaGEyMC1pZXRmLXBvbHkxMzA1IiwKICAgICAgICAiYXJyeWVwIjogIjk2NDIiLAogICAgICAgICJ2ZXJ5eWVwIjogIkdlcm1hbnkiLAogICAgICAgICJzY2llbnR5ZXAiOiAiRnJhbmtmdXJ0IiwKICAgICAgICAic3RmdWx5ZXAiOiAiNDMuMjMxLjIzNC44MiIKICAgIH0sCiAgICB7CiAgICAgICAgIndlcnllcCI6ICJqOXhLREpkNzF1ckVQYmd5bGM2MkJaSCIsCiAgICAgICAgInVyZXllcCI6ICJjaGFjaGEyMC1pZXRmLXBvbHkxMzA1IiwKICAgICAgICAiYXJyeWVwIjogIjk2NDMiLAogICAgICAgICJ2ZXJ5eWVwIjogImtvcmVhc291dGgiLAogICAgICAgICJzY2llbnR5ZXAiOiAiU2VvdWwiLAogICAgICAgICJzdGZ1bHllcCI6ICI0My4yMzEuMjM0LjgzIgogICAgfSwKICAgIHsKICAgICAgICAid2VyeWVwIjogImo5eEtESmQ3MXVyRVBiZ3lsYzYyQlpIIiwKICAgICAgICAidXJleWVwIjogImNoYWNoYTIwLWlldGYtcG9seTEzMDUiLAogICAgICAgICJhcnJ5ZXAiOiAiOTY0NCIsCiAgICAgICAgInZlcnl5ZXAiOiAiU2luZ2Fwb3JlIiwKICAgICAgICAic2NpZW50eWVwIjogIlNpbmdhcG9yZSIsCiAgICAgICAgInN0ZnVseWVwIjogIjQzLjIzMS4yMzQuODQiCiAgICB9Cl0=
     """.trimIndent()
 
     val vpn_fast = """

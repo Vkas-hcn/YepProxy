@@ -3,11 +3,11 @@ import androidx.annotation.Keep
 
 @Keep
 data class YepUserBean(
-    val onLleav: String,
-    val onLeate: String,
-    val onLmill: String,
-    val onLage: String,
-    val onLiden: String,
-    val onLclem: String,
-    val onLisp: String
+    val dineyrh: String,
+    val tempyrh: String,
+    val calyrh: String,
+    val hisyrh: String,
+    val pteryrh: String,
+    val oeeryrh: String,
+    val adoryrh: String
 )

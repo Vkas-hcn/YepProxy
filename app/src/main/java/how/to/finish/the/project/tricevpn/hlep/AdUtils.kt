@@ -17,27 +17,27 @@ object AdUtils {
         val data = ServiceData.getUserJson()
         val referrer = DataUtils.refer_data
         val pattern = "fb4a|facebook".toRegex(RegexOption.IGNORE_CASE)
-        return (pattern.containsMatchIn(referrer) && data.onLleav == "1")
+        return (pattern.containsMatchIn(referrer) && data.dineyrh == "1")
     }
 
     fun isItABuyingUser(): Boolean {
         val data =  ServiceData.getUserJson()
         val referrer = DataUtils.refer_data
         return isFacebookUser()
-                || (data.onLeate == "1" && referrer.contains("gclid", true))
-                || (data.onLmill == "1" && referrer.contains("not%20set", true))
-                || (data.onLage == "1" && referrer.contains(
+                || (data.tempyrh == "1" && referrer.contains("gclid", true))
+                || (data.calyrh == "1" && referrer.contains("not%20set", true))
+                || (data.hisyrh == "1" && referrer.contains(
             "youtubeads",
             true
         ))
-                || (data.onLiden == "1" && referrer.contains("%7B%22", true))
-                || (data.onLclem == "1" && referrer.contains("adjust", true))
-                || (data.onLisp == "1" && referrer.contains("bytedance", true))
+                || (data.pteryrh == "1" && referrer.contains("%7B%22", true))
+                || (data.oeeryrh == "1" && referrer.contains("adjust", true))
+                || (data.adoryrh == "1" && referrer.contains("bytedance", true))
     }
 
     //屏蔽广告用户
     fun blockAdUsers():Boolean{
-        when(ServiceData.getLogicJson().onLmatt){
+        when(ServiceData.getLogicJson().coronyer){
             "1"->{
                 return true
             }
@@ -55,7 +55,7 @@ object AdUtils {
     //黑名单
     fun blockAdBlacklist():Boolean{
         val blackData = !DataUtils.clock_data.contains("mummify")
-        when(ServiceData.getLogicJson().onLprob){
+        when(ServiceData.getLogicJson().lieayer){
             "1"->{
                 return !blackData
             }
@@ -69,7 +69,7 @@ object AdUtils {
     }
     //是否扰流
     fun spoilerOrNot():Boolean{
-        when(ServiceData.getLogicJson().onLfeli){
+        when(ServiceData.getLogicJson().toryyer){
             "1"->{
                 return true
             }
