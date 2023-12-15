@@ -5,7 +5,7 @@
     <data>
     <variable
         name="viewModel"
-        type="com.dual.pro.one.dualprotocolone.base.BaseViewModel" />
+        type="how.to.finish.the.project.tricevpn.base.BaseViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

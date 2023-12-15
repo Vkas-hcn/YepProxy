@@ -15,7 +15,9 @@
         tools:ignore="LockedOrientationActivity"
         tools:replace="android:fullBackupContent,android:label,android:name,android:theme,android:roundIcon,android:icon"
         tools:targetApi="31">
-
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/google_ad_id" />
         <activity
             android:name=".view.ui.StartActivity"
             android:exported="true"

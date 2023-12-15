@@ -2,51 +2,94 @@ package how.to.finish.the.project.tricevpn.view.ui
 
 import android.view.KeyEvent
 import androidx.lifecycle.lifecycleScope
-import com.dual.pro.one.dualprotocolone.base.BaseActivity
+import how.to.finish.the.project.tricevpn.base.BaseActivity
 import how.to.finish.the.project.tricevpn.view.model.MainViewModel
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
 import android.net.VpnService
 import android.os.IBinder
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.lifecycle.LifecycleObserver
+import androidx.preference.PreferenceDataStore
+import com.github.shadowsocks.aidl.IShadowsocksService
+import com.github.shadowsocks.aidl.ShadowsocksConnection
+import com.github.shadowsocks.bg.BaseService
+import com.github.shadowsocks.preference.DataStore
+import com.github.shadowsocks.preference.OnPreferenceDataStoreChangeListener
+import com.github.shadowsocks.utils.Key
+import com.github.shadowsocks.utils.StartService
+import com.google.gson.Gson
 import de.blinkt.openvpn.api.ExternalOpenVPNService
 import de.blinkt.openvpn.api.IOpenVPNAPIService
 import de.blinkt.openvpn.api.IOpenVPNStatusCallback
 import how.to.finish.the.project.tricevpn.R
+import how.to.finish.the.project.tricevpn.base.App
 import how.to.finish.the.project.tricevpn.databinding.ActivityMainBinding
+import how.to.finish.the.project.tricevpn.hlep.DataUtils
 import how.to.finish.the.project.tricevpn.hlep.DataUtils.TAG
 import how.to.finish.the.project.tricevpn.hlep.ServiceData
+import how.to.finish.the.project.tricevpn.hlep.YepTimerUtils
+import how.to.finish.the.project.tricevpn.net.YepOkHttpUtils
+import how.to.finish.the.project.tricevpn.view.utils.MainFun
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
+class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
+    ShadowsocksConnection.Callback,
+    OnPreferenceDataStoreChangeListener, LifecycleObserver {
 
     override fun getLayoutRes(): Int = R.layout.activity_main
 
     override fun getViewModelClass(): Class<MainViewModel> = MainViewModel::class.java
-    private lateinit var requestPermissionForResultVPN: ActivityResultLauncher<Intent?>
-
+    private val connection = ShadowsocksConnection(true)
+    private var timeJob: Job? = null
     override fun init() {
         mainClick()
         initVpnSetting()
+        showTimeTv()
+        setServiceData()
     }
-    private fun mainClick(){
+
+    private fun setServiceData() {
+        viewModel.liveInitializeServerData.observe(this) {
+            it?.let {
+                viewModel.setFastInformation(it, binding)
+            }
+        }
+
+        viewModel.liveUpdateServerData.observe(this) {
+            it?.let {
+                viewModel.whetherRefreshServer = true
+                toConnectVpn()
+            }
+        }
+        viewModel.liveNoUpdateServerData.observe(this) {
+            it?.let {
+                viewModel.whetherRefreshServer = false
+                viewModel.setFastInformation(it, binding)
+                toConnectVpn()
+            }
+
+        }
+    }
+
+    private fun mainClick() {
         binding.showGuide = true
+        binding.agreement = DataUtils.agreement_type
         binding.viewBg.setOnClickListener {
         }
         binding.atvPp.setOnClickListener {
@@ -59,102 +102,132 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
             viewModel.shareUrl(this)
         }
         binding.imgMenu.setOnClickListener {
-            binding.dlMain.open()
+            viewModel.clickChange(this, nextFun = {
+                binding.dlMain.open()
+            })
         }
         binding.llAuto.setOnClickListener {
-            binding.agreement = 0
+            viewModel.clickChange(this, nextFun = {
+                checkAgreement(0)
+            })
         }
         binding.llSs.setOnClickListener {
-            binding.agreement = 1
+            viewModel.clickChange(this, nextFun = {
+                checkAgreement(1)
+            })
         }
         binding.llOpen.setOnClickListener {
-            binding.agreement = 2
+            viewModel.clickChange(this, nextFun = {
+                checkAgreement(2)
+            })
         }
         binding.llService.setOnClickListener {
-            launchActivity(ServiceActivity::class.java)
+            viewModel.clickChange(this, nextFun = {
+                viewModel.jumpToServerList(this)
+            })
         }
     }
 
-    fun toClickConnect(v: View){
-        mService?.let {
-            step2(it)
-        }
-        lifecycleScope.launch {
-            binding.showGuide = false
-            viewModel.rotateImageViewInfinite(binding.imageView3, 800)
-            binding.vpnState = 1
-            delay(2000)
-            binding.vpnState = 2
-            viewModel.stopRotation(binding.imageView3)
-        }
-    }
-    fun step2(server: IOpenVPNAPIService): Job? {
-        if (checkVPNPermission(this)) {
-            val job = MainScope().launch(Dispatchers.IO) {
-                    val data = ServiceData.getAllVpnListData()[0]
-                    runCatching {
-                        val conf = assets.open("fast_trice.ovpn")
-                        val br = BufferedReader(InputStreamReader(conf))
-                        val config = StringBuilder()
-                        var line: String?
-                        while (true) {
-                            line = br.readLine()
-                            if (line == null) break
-                            if (line.contains("remote 222", true)) {
-                                line = "remote ${data.ip} ${data.port}"
-                            } else if (line.contains("wrongpassword", true)) {
-                                line = data.password
-                            } else if (line.contains("cipher AES-256-GCM", true)) {
-                                line = "cipher ${data.agreement}"
-                            }
-                            config.append(line).append("\n")
-                        }
-                        br.close()
-                        conf.close()
-                        Log.e(TAG, "step2: =${config}")
-                        server.startVPN(config.toString())
-
-                    }.onFailure {
-                    }
+    private fun checkAgreement(type: Int) {
+        if (App.vpnState) {
+            if (type == 2 && binding.agreement != 2) {
+                showSwitching(type)
+                return
             }
-            return job
+            if (type != 2 && binding.agreement == 2) {
+                showSwitching(type)
+                return
+            }
+            binding.agreement = type
+
         } else {
-            VpnService.prepare(this).let {
-                requestPermissionForResultVPN.launch(it)
-            }
+            binding.agreement = type
         }
-        return null
+        Log.e(TAG, "DataUtils.agreement_type1=${DataUtils.agreement_type}")
     }
 
-    var mService: IOpenVPNAPIService? = null
-    fun initVpnSetting() {
+    private fun showSwitching(type: Int) {
+        val dialogVpn: androidx.appcompat.app.AlertDialog =
+            androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Tips")
+                .setMessage("switching the connection mode will disconnect the current connection whether to continue")
+                .setCancelable(false)
+                .setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                    toConnectVpn()
+                    binding.agreement = type
+                    Log.e(TAG, "DataUtils.agreement_type2=${DataUtils.agreement_type}")
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.dismiss()
+                }.create()
+        dialogVpn.setCancelable(false)
+        dialogVpn.show()
+    }
+
+    fun toClickConnect(v: View) {
+        lifecycleScope.launch {
+            toConnectVpn()
+        }
+    }
+
+    private fun toConnectVpn() {
+        binding.showGuide = false
+        if (!App.vpnState) {
+            DataUtils.agreement_type = binding?.agreement!!
+        }
+        if (binding.agreement == 2) {
+            viewModel.startTheJudgment(this)
+        } else {
+            connect.launch(null)
+        }
+    }
+
+
+    private fun initVpnSetting() {
+        viewModel.initData(this, binding, this)
         bindService(
             Intent(this, ExternalOpenVPNService::class.java),
             mConnection,
             BIND_AUTO_CREATE
         )
-        requestPermissionForResultVPN =
+        viewModel.requestPermissionForResultVPN =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 requestPermissionForResult(it)
             }
     }
-    private fun requestPermissionForResult(result: ActivityResult) {
-        if (result.resultCode == RESULT_OK) {
-            mService?.let { it1 -> step2(it1) }
-            Log.e(TAG, "requestPermissionForResult: 1", )
+
+
+    private val connect = registerForActivityResult(StartService()) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            YepOkHttpUtils().getCurrentIp()
+        }
+        if (it) {
+            Toast.makeText(this, "No permission", Toast.LENGTH_SHORT).show()
         } else {
-//            openServerState.postValue(OpenServiceState.DISCONNECTED)
-            Log.e(TAG, "requestPermissionForResult: 2", )
+            viewModel.startTheJudgment(this)
         }
     }
+
+
+    private fun requestPermissionForResult(result: ActivityResult) {
+        if (result.resultCode == RESULT_OK) {
+            viewModel.startTheJudgment(this)
+            Log.e(TAG, "requestPermissionForResult: 1")
+        } else {
+            Toast.makeText(this, "No permission", Toast.LENGTH_SHORT).show()
+            Log.e(TAG, "requestPermissionForResult: 2")
+        }
+    }
+
     private val mConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(
             className: ComponentName?,
             service: IBinder?,
         ) {
-            mService = IOpenVPNAPIService.Stub.asInterface(service)
+            viewModel.mService = IOpenVPNAPIService.Stub.asInterface(service)
             try {
-                mService?.registerStatusCallback(mCallback)
+                viewModel.mService?.registerStatusCallback(mCallback)
                 Log.e("open vpn mService", "mService onServiceConnected")
             } catch (e: Exception) {
                 Log.e("open vpn error", e.message.toString())
@@ -163,24 +236,45 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
         override fun onServiceDisconnected(className: ComponentName?) {
             Log.e("open vpn mService", "mService onServiceDisconnected")
-            mService = null
+            viewModel.mService = null
         }
     }
     private val mCallback = object : IOpenVPNStatusCallback.Stub() {
         override fun newStatus(uuid: String?, state: String?, message: String?, level: String?) {
             // NOPROCESS 未连接 // CONNECTED 已连接
             // RECONNECTING 尝试重新链接 // EXITING 连接中主动掉用断开
-            Log.e(TAG, "newStatus: state=$state;message=$message", )
+            Log.e(
+                TAG,
+                "newStatus: state=$state;message=$message;agreement=${DataUtils.agreement_type}"
+            )
+            if (DataUtils.agreement_type != 2) {
+                return
+            }
             when (state) {
                 "CONNECTED" -> {
-
+                    binding.showGuide = false
+                    App.vpnState = true
+                    viewModel.connectOrDisconnectYep(this@MainActivity, true)
+                    viewModel.changeState(
+                        state = BaseService.State.Idle,
+                        this@MainActivity,
+                        App.vpnState
+                    )
                 }
 
-                "RECONNECTING" -> {
+                "RECONNECTING", "EXITING", "CONNECTRETRY" -> {
+                    viewModel.mService?.disconnect()
                 }
 
                 "NOPROCESS" -> {
-
+                    viewModel.mService?.disconnect()
+                    App.vpnState = false
+                    viewModel.connectOrDisconnectYep(this@MainActivity, true)
+                    viewModel.changeState(
+                        state = BaseService.State.Idle,
+                        this@MainActivity,
+                        App.vpnState
+                    )
                 }
 
 
@@ -190,36 +284,138 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         }
 
     }
-    private fun checkVPNPermission(activity: MainActivity): Boolean {
-        VpnService.prepare(activity).let {
-            return it == null
+
+
+    fun showTimeTv() {
+        timeJob?.cancel()
+        timeJob = null
+        timeJob = lifecycleScope.launch {
+            while (isActive) {
+                binding.atvTime.text = YepTimerUtils.getTiming()
+                delay(1000L)
+            }
         }
     }
-    private fun isAppOnline(context: Context?): Boolean {
-        if (context == null) {
-            return false
-        }
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = connectivityManager.activeNetwork ?: return false
-        val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
-        if (networkCapabilities != null) {
-            return networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
-        }
-        return false
+
+    override fun onStart() {
+        super.onStart()
+        connection.bandwidthTimeout = 500
     }
+
+    override fun onResume() {
+        super.onResume()
+        handleWarmBoot()
+    }
+
+    private fun handleWarmBoot() {
+        viewModel.showHomeAd(this)
+    }
+
+    private fun handleYepTimerLock() {
+//        if (!App.vpnState && viewModel.nowClickState != 1) {
+//            viewModel.changeOfVpnStatus(this, 0)
+//        }
+        if (App.vpnState) {
+            binding.showGuide = false
+            binding.vpnState = 2
+            if (binding.atvTime.text.toString() == "00:00:00") {
+                YepTimerUtils.startTiming()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        connection.bandwidthTimeout = 0
+        viewModel.jobStartYep?.cancel() // 取消执行方法的协程
+        viewModel.jobStartYep = null
+        if (App.vpnState) {
+            viewModel.changeOfVpnStatus(this, 2)
+        } else {
+            viewModel.changeOfVpnStatus(this, 0)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        DataStore.publicStore.unregisterChangeListener(this)
+        connection.disconnect(this)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 0x22 && viewModel.whetherRefreshServer) {
+            viewModel.setFastInformation(viewModel.afterDisconnectionServerData, binding)
+            val serviceData = Gson().toJson(viewModel.afterDisconnectionServerData)
+            DataUtils.connect_vpn = serviceData
+            viewModel.currentServerData = viewModel.afterDisconnectionServerData
+        }
+        if (requestCode == 0x33) {
+            Log.e(TAG, "onActivityResult: =${App.serviceState}")
+            when (App.serviceState) {
+                0 -> {
+                    viewModel.updateSkServer(false)
+                }
+
+                1 -> {
+                    viewModel.updateSkServer(true)
+                }
+            }
+            App.serviceState = -1
+        }
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (binding.showGuide==true) {
+            if (binding.showGuide == true) {
                 binding.showGuide = false
             } else {
-//                if (!(lavViewOg.isAnimating && MainFun.statusAtTheTimeOfClick == BaseService.State.Stopped.name)) {
-//                    finish()
-//                }
-                finish()
+                if (viewModel.isConnectGuo(this)) {
+                    finish()
+                }
+
             }
         }
         return true
     }
 
+    override fun stateChanged(state: BaseService.State, profileName: String?, msg: String?) {
+        App.vpnState = state.canStop
+        viewModel.changeState(state, this)
+    }
+
+    override fun onServiceConnected(service: IShadowsocksService) {
+        val state = BaseService.State.values()[service.state]
+        setSsVpnState(state.canStop)
+    }
+
+    private fun setSsVpnState(canStop: Boolean) {
+        Log.e(
+            TAG,
+            "setSsVpnState: canStop=${canStop};DataUtils.agreement_type =${DataUtils.agreement_type}",
+        )
+        if (DataUtils.agreement_type != 2) {
+            App.vpnState = canStop
+            handleYepTimerLock()
+        }
+    }
+
+    fun setOpenVpnState(canStop: Boolean) {
+        if (DataUtils.agreement_type != 2) {
+            App.vpnState = canStop
+        }
+    }
+
+    override fun onPreferenceDataStoreChanged(store: PreferenceDataStore, key: String) {
+        when (key) {
+            Key.serviceMode -> {
+                connection.disconnect(this)
+                connection.connect(this, this)
+            }
+        }
+    }
 }

@@ -1,7 +1,7 @@
 package how.to.finish.the.project.tricevpn.view.ui
 
-import com.dual.pro.one.dualprotocolone.base.BaseActivity
-import com.dual.pro.one.dualprotocolone.base.BaseViewModel
+import how.to.finish.the.project.tricevpn.base.BaseActivity
+import how.to.finish.the.project.tricevpn.base.BaseViewModel
 import how.to.finish.the.project.tricevpn.R
 import how.to.finish.the.project.tricevpn.databinding.ActivityPpWebBinding
 import how.to.finish.the.project.tricevpn.hlep.DataUtils

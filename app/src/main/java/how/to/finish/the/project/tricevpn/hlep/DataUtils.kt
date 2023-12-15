@@ -7,7 +7,13 @@ import how.to.finish.the.project.tricevpn.base.App.Companion.mmkvDua
 object DataUtils {
     const val TAG = "DualProtocolOne"
     const val pp_url = "https://www.baidu.com"
-
+    const val ip_url = "https://ifconfig.me/ip"
+    const val clock_url = "https://visa.easyconnectionprocy.com/cheat/min/purine"
+    const val vpn_data_type = "vpn_data_type"
+    const val fast_data_type = "fast_data_type"
+    const val ad_data_type = "ad_data_type"
+    const val user_data_type = "user_data_type"
+    const val lj_data_type = "lj_data_type"
     var vpn_list: String = ""
         set(value) {
             mmkvDua.encode("vpn_list", value)
@@ -22,19 +28,73 @@ object DataUtils {
         }
         get() = mmkvDua.decodeString("vpn_fast", "") ?: ""
 
+    var ad_data: String = ""
+        set(value) {
+            mmkvDua.encode("ad_data", value)
+            field = value
+        }
+        get() = mmkvDua.decodeString("ad_data", "") ?: ""
+    var user_data: String = ""
+        set(value) {
+            mmkvDua.encode("user_data", value)
+            field = value
+        }
+        get() = mmkvDua.decodeString("user_data", "") ?: ""
+    var lj_data: String = ""
+        set(value) {
+            mmkvDua.encode("lj_data", value)
+            field = value
+        }
+        get() = mmkvDua.decodeString("lj_data", "") ?: ""
+
     var recently_nums: String = ""
         set(value) {
             mmkvDua.encode("recently_nums", value)
             field = value
         }
         get() = mmkvDua.decodeString("recently_nums", "") ?: ""
-
-    var connect_vpn_pos: Int = 0
+    var ip_data: String = ""
         set(value) {
-            mmkvDua.encode("connect_vpn_pos", value)
+            mmkvDua.encode("ip_data", value)
             field = value
         }
-        get() = mmkvDua.decodeInt("connect_vpn_pos", 0)
+        get() = mmkvDua.decodeString("ip_data", "") ?: ""
+    var ip_data2: String = ""
+        set(value) {
+            mmkvDua.encode("ip_data2", value)
+            field = value
+        }
+        get() = mmkvDua.decodeString("ip_data2", "") ?: ""
+    var connect_vpn: String = ""
+        set(value) {
+            mmkvDua.encode("connect_vpn", value)
+            field = value
+        }
+        get() = mmkvDua.decodeString("connect_vpn", "") ?: ""
+
+    var refer_data: String = ""
+        set(value) {
+            mmkvDua.encode("refer_data", value)
+            field = value
+        }
+        get() = mmkvDua.decodeString("refer_data", "") ?: ""
+    var uu0d_yep: String = ""
+        set(value) {
+            mmkvDua.encode("uu0d_yep", value)
+            field = value
+        }
+        get() = mmkvDua.decodeString("uu0d_yep", "") ?: ""
+    var clock_data
+        set(value) {
+            mmkvDua.encode("clock_data", value)
+        }
+        get() = mmkvDua.decodeString("clock_data", "") ?: ""
+    var agreement_type:Int = 0
+        set(value) {
+            mmkvDua.encode("agreement_type", value)
+            field = value
+        }
+        get() = mmkvDua.decodeInt("agreement_type", 0)
     fun String.getServiceFlag(): Int {
         return when (this) {
             "United States" -> R.drawable.us
@@ -46,7 +106,7 @@ object DataUtils {
             "Hong Kong" -> R.drawable.hongkong
             "India" -> R.drawable.india
             "Japan" -> R.drawable.japan
-            "Korea" -> R.drawable.korea
+            "koreasouth" -> R.drawable.korea
             "Singapore" -> R.drawable.singapore
             "Taiwan" -> R.drawable.taiwan
             "Brazil" -> R.drawable.brazil
@@ -57,4 +117,9 @@ object DataUtils {
             else -> R.drawable.fast
         }
     }
+
+    const val connectionYepStatus="connectionYepStatus"
+    const val serverYepInformation="serverYepInformation"
+    const val whetherYepConnected="whetherYepConnected"
+    const val currentYepService="currentYepService"
 }

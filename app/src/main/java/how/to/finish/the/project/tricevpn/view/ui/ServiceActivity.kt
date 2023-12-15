@@ -1,68 +1,77 @@
 package how.to.finish.the.project.tricevpn.view.ui
 
 import android.util.Log
-import com.dual.pro.one.dualprotocolone.base.BaseActivity
-import com.dual.pro.one.dualprotocolone.base.BaseViewModel
+import android.view.KeyEvent
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import how.to.finish.the.project.tricevpn.base.BaseActivity
 import how.to.finish.the.project.tricevpn.R
 import how.to.finish.the.project.tricevpn.databinding.ActivityServiceListBinding
 import how.to.finish.the.project.tricevpn.hlep.DataUtils
 import how.to.finish.the.project.tricevpn.hlep.ServiceBean
 import how.to.finish.the.project.tricevpn.hlep.ServiceData
 import how.to.finish.the.project.tricevpn.view.adapter.ServiceAdapter
+import how.to.finish.the.project.tricevpn.view.model.ServiceViewModel
 
-class ServiceActivity : BaseActivity<BaseViewModel, ActivityServiceListBinding>() {
+class ServiceActivity : BaseActivity<ServiceViewModel, ActivityServiceListBinding>() {
 
     override fun getLayoutRes(): Int = R.layout.activity_service_list
 
-    override fun getViewModelClass(): Class<BaseViewModel> = BaseViewModel::class.java
-    private val adapterAll by lazy { ServiceAdapter(ServiceData.getAllVpnListData()) }
-    private val adapterRecently by lazy { ServiceAdapter(ServiceData.getAllVpnListData()) }
+    override fun getViewModelClass(): Class<ServiceViewModel> = ServiceViewModel::class.java
 
-    private lateinit var allVpnListData: MutableList<ServiceBean>
-    private lateinit var recentlyVpnListData: MutableList<ServiceBean>
 
     override fun init() {
+
+        binding.imageView.setOnClickListener { viewModel.returnToHomePage(this) }
+        binding.aivRefley.setOnClickListener { viewModel.refresh(this) }
+        val bundle = intent.extras
+        viewModel.checkSkServiceBean = ServiceBean()
+        viewModel.whetherToConnect = bundle?.getBoolean(DataUtils.whetherYepConnected) == true
+        viewModel.checkSkServiceBean = Gson().fromJson(
+            bundle?.getString(DataUtils.currentYepService),
+            object : TypeToken<ServiceBean?>() {}.type
+        )
+        viewModel.checkSkServiceBeanClick = viewModel.checkSkServiceBean
         initRecentlyAdapter()
         initAllAdapter()
-        binding.imageView.setOnClickListener { finish() }
     }
-    private fun initRecentlyAdapter(){
-        binding.isEmoryData = true
-        recentlyVpnListData = ServiceData.findVpnByPos()
-        binding.isEmoryData = recentlyVpnListData.size <= 0
-        binding.rvRecentlyConnected.adapter = adapterRecently
-        binding.rvRecentlyConnected.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-        adapterRecently.setOnItemClickListener(object : ServiceAdapter.OnItemClickListener {
+
+    private fun initRecentlyAdapter() {
+        viewModel.getsRecently()
+        binding.isEmoryData = viewModel.recentlyVpnListData.size <= 0
+        binding.rvRecentlyConnected.adapter = viewModel.adapterRecord
+        binding.rvRecentlyConnected.layoutManager =
+            androidx.recyclerview.widget.LinearLayoutManager(this)
+        viewModel.adapterRecord.setOnItemClickListener(object :
+            ServiceAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
-                Log.e(DataUtils.TAG, "onItemClick: $position")
-                allVpnListData.forEachIndexed { index, serviceBean ->
-                    if (index == position) {
-                        serviceBean.check = true
-                    } else {
-                        serviceBean.check = false
+                viewModel.allVpnListData.forEachIndexed { index, _ ->
+                    if (viewModel.recentlyVpnListData[position].ip == viewModel.allVpnListData[index].ip) {
+                        Log.e(DataUtils.TAG, "onItemClick: $index")
+                        viewModel.selectServer(this@ServiceActivity, index)
+
                     }
                 }
-                adapterAll.notifyDataSetChanged()
             }
         })
     }
-    private fun initAllAdapter(){
-        binding.isEmoryData = true
-        allVpnListData = ServiceData.getAllVpnListData()
-        binding.rvAll.adapter = adapterAll
+
+    private fun initAllAdapter() {
+        viewModel.getAllServer()
+        binding.rvAll.adapter = viewModel.adapterAll
         binding.rvAll.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(this)
-        adapterAll.setOnItemClickListener(object : ServiceAdapter.OnItemClickListener {
+        viewModel.adapterAll.setOnItemClickListener(object : ServiceAdapter.OnItemClickListener {
             override fun onItemClick(position: Int) {
                 Log.e(DataUtils.TAG, "onItemClick: $position")
-                allVpnListData.forEachIndexed { index, serviceBean ->
-                    if (index == position) {
-                        serviceBean.check = true
-                    } else {
-                        serviceBean.check = false
-                    }
-                }
-                adapterAll.notifyDataSetChanged()
+                viewModel.selectServer(this@ServiceActivity, position)
             }
         })
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            viewModel.returnToHomePage(this)
+        }
+        return true
     }
 }

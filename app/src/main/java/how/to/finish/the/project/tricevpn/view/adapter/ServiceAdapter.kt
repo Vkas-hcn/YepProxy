@@ -10,10 +10,14 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import how.to.finish.the.project.tricevpn.R
+import how.to.finish.the.project.tricevpn.base.App
 import how.to.finish.the.project.tricevpn.hlep.DataUtils.getServiceFlag
 import how.to.finish.the.project.tricevpn.hlep.ServiceBean
 
-class ServiceAdapter(private val dataList: MutableList<ServiceBean>) :
+class ServiceAdapter(
+    private val dataList: MutableList<ServiceBean>,
+    private val isAll: Boolean
+) :
     RecyclerView.Adapter<ServiceAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -21,7 +25,7 @@ class ServiceAdapter(private val dataList: MutableList<ServiceBean>) :
         var aivFlag: ImageView = itemView.findViewById(R.id.aiv_flag)
         var llItem: LinearLayout = itemView.findViewById(R.id.ll_item)
         var aivCheck: ImageView = itemView.findViewById(R.id.aiv_check)
-
+        var imgSmart: ImageView = itemView.findViewById(R.id.img_smart)
         init {
             itemView.setOnClickListener {
                 val position = adapterPosition
@@ -64,17 +68,23 @@ class ServiceAdapter(private val dataList: MutableList<ServiceBean>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // 获取数据
         val item = dataList[position]
+
         // 将数据绑定到视图上
         if (item.best) {
             holder.tvName.text = "Faster Server"
             holder.aivFlag.setImageResource(R.drawable.fast)
+            holder.imgSmart.visibility = View.VISIBLE
         } else {
             holder.tvName.text = String.format(item.country + "-" + item.city)
             holder.aivFlag.setImageResource(item.country.getServiceFlag())
+            holder.imgSmart.visibility = View.GONE
         }
-        if (item.check) {
-            holder.aivCheck.setImageResource(R.drawable.ic_check)
-            holder.llItem.background = holder.itemView.context.getDrawable(R.drawable.bg_check_item)
+        if (isAll && item.check) {
+            if (App.vpnState) {
+                holder.aivCheck.setImageResource(R.drawable.ic_check)
+                holder.llItem.background =
+                    holder.itemView.context.getDrawable(R.drawable.bg_check_item)
+            }
         } else {
             holder.aivCheck.setImageResource(R.drawable.ic_dis_check)
             holder.llItem.background =
@@ -88,6 +98,12 @@ class ServiceAdapter(private val dataList: MutableList<ServiceBean>) :
     }
 
     fun addData(newData: MutableList<ServiceBean>) {
+        dataList.addAll(newData)
+        notifyDataSetChanged()
+    }
+
+    fun setData(newData: MutableList<ServiceBean>) {
+        dataList.clear()
         dataList.addAll(newData)
         notifyDataSetChanged()
     }

@@ -1,4 +1,4 @@
-package com.dual.pro.one.dualprotocolone.base
+package how.to.finish.the.project.tricevpn.base
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 abstract class BaseActivity<VM : ViewModel, DB : ViewDataBinding> : AppCompatActivity() {
-    protected lateinit var binding: DB
+    lateinit var binding: DB
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, getLayoutRes())
@@ -31,6 +31,11 @@ abstract class BaseActivity<VM : ViewModel, DB : ViewDataBinding> : AppCompatAct
         val intent = Intent(this, destinationActivity)
         intent.putExtras(extras)
         startActivity(intent)
+    }
+    fun launchActivityWithExtrasResult(destinationActivity: Class<*>, extras: Bundle,code:Int) {
+        val intent = Intent(this, destinationActivity)
+        intent.putExtras(extras)
+        startActivityForResult(intent,code)
     }
 }
 

@@ -7,25 +7,25 @@ import java.io.Serializable
 
 @Keep
 data class ServiceBean(
-    @SerializedName("onLu")
-    val password: String,
+    @SerializedName("gg_a_a")
+    val password: String="",
 
-    @SerializedName("onLo")
-    val port: String,
+    @SerializedName("gg_a_b")
+    val port: String="",
 
-    @SerializedName("onLi")
-    val agreement: String,
+    @SerializedName("gg_a_y")
+    val agreement: String="",
 
-    @SerializedName("onLp")
-    var country: String,
+    @SerializedName("gg_a_p")
+    var country: String="",
 
-    @SerializedName("onLl")
-    var city: String,
+    @SerializedName("gg_a_c")
+    var city: String="",
 
-    @SerializedName("onLm")
-    val ip: String,
+    @SerializedName("gg_a_o")
+    val ip: String="",
 
-    var best: Boolean,
-    var smart: Boolean,
-    var check: Boolean,
+    var best: Boolean =false,
+    var smart: Boolean=false,
+    var check: Boolean=false,
 ):Serializable

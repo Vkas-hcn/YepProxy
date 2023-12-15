@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="toClickConnect"
-                android:src="@{vpnState == 1 ? @drawable/ic_main_loading: (vpnState == 0 ? @drawable/ic_connect : @drawable/ic_disconnect)}"
+                android:src="@drawable/ic_connect"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView2"
                 app:layout_constraintEnd_toEndOf="@+id/imageView2"
                 app:layout_constraintStart_toStartOf="@+id/imageView2"
@@ -96,11 +96,13 @@
                 app:layout_constraintTop_toBottomOf="@+id/imageView2">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/aiv_flag"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:src="@drawable/us" />
 
                 <TextView
+                    android:id="@+id/tv_country"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
@@ -286,6 +288,7 @@
                     android:visibility="@{showAd == 1 ? View.VISIBLE : View.GONE}" />
 
                 <FrameLayout
+                    android:id="@+id/fl_ad"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:visibility="@{showAd == 2 ? View.VISIBLE : View.GONE}" />

@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 rootProject.name = "YepProxy"
 include ':app'
 include ':open'
+include ':core'

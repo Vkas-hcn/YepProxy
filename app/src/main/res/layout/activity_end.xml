@@ -42,7 +42,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageView2"
+            android:id="@+id/img_state"
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:src="@{vpnState ? @drawable/ic_end_connect : @drawable/ic_end_disconnect}"
@@ -60,7 +60,7 @@
             android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+            app:layout_constraintTop_toBottomOf="@+id/img_state" />
 
         <LinearLayout
             android:id="@+id/ll_item"
@@ -135,6 +135,7 @@
                 android:visibility="@{showAd ? View.GONE : View.VISIBLE}" />
 
             <FrameLayout
+                android:id="@+id/fl_ad"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="@{showAd ? View.VISIBLE : View.GONE}" />
