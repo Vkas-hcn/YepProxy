@@ -7,7 +7,7 @@ import how.to.finish.the.project.tricevpn.base.App.Companion.mmkvDua
 object DataUtils {
     const val TAG = "DualProtocolOne"
     const val pp_url = "https://www.baidu.com"
-    const val ip_url = "https://ifconfig.me/ip"
+    const val ip_url = "https://ip.seeip.org/geoip/"
     const val clock_url = "https://visa.easyconnectionprocy.com/cheat/min/purine"
     const val vpn_data_type = "pactyep"
     const val fast_data_type = "stratyem"

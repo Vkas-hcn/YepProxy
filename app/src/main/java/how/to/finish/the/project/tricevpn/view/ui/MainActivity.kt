@@ -59,6 +59,9 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
     private val connection = ShadowsocksConnection(true)
     private var timeJob: Job? = null
     override fun init() {
+        if (MainFun.isLegalIpAddress(this)) {
+            return
+        }
         mainClick()
         initVpnSetting()
         showTimeTv()

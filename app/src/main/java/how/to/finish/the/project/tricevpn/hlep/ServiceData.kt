@@ -12,7 +12,7 @@ object ServiceData {
     "dineyrh": 2,
     "tempyrh": 2,
     "calyrh": 2,
-    "hisyrh": 2,
+    "hisyrh": 1,
     "pteryrh": 2,
     "oeeryrh": 2,
     "adoryrh": 2
@@ -21,9 +21,9 @@ object ServiceData {
     //本地广告逻辑
     const val local_yep_logic = """
 {
-    "coronyer": "2",
-    "lieayer": "2",
-    "toryyer": "1"
+    "coronyer": "1",
+    "lieayer": "1",
+    "toryyer": "2"
 }    """
     val local_ad_data = """
 {

@@ -208,10 +208,9 @@ class MainViewModel : BaseViewModel() {
      * 启动VPN
      */
     private fun startVpn(activity: AppCompatActivity) {
-//        if (MainFun.isIllegalIp()) {
-//            MainFun.isBulletBoxUsed(activity)
-//            return
-//        }
+        if (MainFun.isLegalIpAddress(activity)) {
+            return
+        }
         if (DataUtils.recently_nums.isEmpty()) {
             ServiceData.saveRecentlyList("0")
         }

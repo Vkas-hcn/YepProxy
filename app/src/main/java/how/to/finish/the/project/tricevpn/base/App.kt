@@ -56,7 +56,6 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
         val packageName = this.packageName
         for (info in processInfoList) {
             if (info!!.pid == myPid && packageName == info.processName) {
-                Log.e(TAG, "onCreate:=${packageName}")
                YepTimerUtils. sendTimerInformation()
                 registerActivityLifecycleCallbacks(this)
                 MobileAds.initialize(this) {}

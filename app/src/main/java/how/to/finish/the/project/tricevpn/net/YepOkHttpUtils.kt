@@ -12,6 +12,8 @@ import kotlinx.coroutines.launch
 class YepOkHttpUtils {
     val client = OkHttpClientUtils()
     fun getCurrentIp() {
+        getCurrentIp2()
+
         try {
             client.get(DataUtils.ip_url, object : OkHttpClientUtils.Callback {
                 override fun onSuccess(response: String) {
@@ -27,6 +29,23 @@ class YepOkHttpUtils {
         }
 
     }
+    fun getCurrentIp2() {
+        try {
+            client.get("https://api.myip.com/", object : OkHttpClientUtils.Callback {
+                override fun onSuccess(response: String) {
+                    Log.e( TAG, "IP2----->${response}")
+                    DataUtils.ip_data2 = response
+                }
+
+                override fun onFailure(error: String) {
+                }
+            })
+        } catch (e: Exception) {
+
+        }
+
+    }
+
     //发起黑名单请求
     fun getBlackList(activity: AppCompatActivity) {
         val map = CloakUtils.cloakJson(activity)

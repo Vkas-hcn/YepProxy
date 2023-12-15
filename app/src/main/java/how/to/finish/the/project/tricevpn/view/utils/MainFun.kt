@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.animation.Animation
 import android.view.animation.RotateAnimation
 import android.widget.ImageView
@@ -24,6 +25,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import how.to.finish.the.project.tricevpn.base.BaseAdom
 import how.to.finish.the.project.tricevpn.hlep.DataUtils
+import how.to.finish.the.project.tricevpn.hlep.DataUtils.TAG
 import how.to.finish.the.project.tricevpn.hlep.Ip2Bean
 import how.to.finish.the.project.tricevpn.hlep.IpBean
 import how.to.finish.the.project.tricevpn.hlep.ServiceBean
@@ -77,6 +79,7 @@ object MainFun {
      */
     fun whetherParsingIsIllegalIp(): Boolean {
         val data = DataUtils.ip_data
+        Log.e(TAG, "whetherParsingIsIllegalIp: ${data}", )
         return if (data.isEmpty()) {
             whetherParsingIsIllegalIp2()
         } else {
