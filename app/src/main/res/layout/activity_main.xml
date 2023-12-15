@@ -341,6 +341,17 @@
                 android:layout_height="match_parent"
                 android:visibility="@{showGuide ? View.VISIBLE : View.GONE}"
                 android:background="#66000000"/>
+
+            <View
+                android:id="@+id/view_click"
+                android:layout_width="300dp"
+                android:layout_height="300dp"
+                android:onClick="toClickConnect"
+                android:visibility="@{showGuide ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="@+id/imageView2"
+                app:layout_constraintEnd_toEndOf="@+id/imageView2"
+                app:layout_constraintStart_toStartOf="@+id/imageView2"
+                app:layout_constraintTop_toBottomOf="@+id/atv_time" />
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/lottieGuide"
                 android:layout_width="150dp"
