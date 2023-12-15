@@ -9,7 +9,7 @@ object ServiceData {
     //本地买量数据
     const val local_yep_data = """
         {
-    "dineyrh": 1,
+    "dineyrh": 2,
     "tempyrh": 2,
     "calyrh": 2,
     "hisyrh": 2,
@@ -23,7 +23,7 @@ object ServiceData {
 {
     "coronyer": "2",
     "lieayer": "2",
-    "toryyer": "2"
+    "toryyer": "1"
 }    """
     val local_ad_data = """
 {

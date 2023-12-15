@@ -20,6 +20,8 @@ import android.os.strictmode.Violation;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.tencent.mmkv.MMKV;
+
 import java.util.concurrent.Executors;
 
 import de.blinkt.openvpn.BuildConfig;
@@ -31,6 +33,7 @@ public class ICSOpenVPNApplication extends Application {
 
     @Override
     public void onCreate() {
+        MMKV.initialize(this);
         if (BuildConfig.BUILD_TYPE.equals("debug"))
             enableStrictModes();
 

@@ -201,12 +201,7 @@ class MainViewModel : BaseViewModel() {
     }
 
     fun startTheJudgment(activity: AppCompatActivity) {
-        if (MainFun.isAppOnline(activity)) {
-            startVpn(activity)
-        } else {
-            Toast.makeText(activity, "Please check your network connection", Toast.LENGTH_SHORT)
-                .show()
-        }
+        startVpn(activity)
     }
 
     /**
@@ -220,7 +215,6 @@ class MainViewModel : BaseViewModel() {
         if (DataUtils.recently_nums.isEmpty()) {
             ServiceData.saveRecentlyList("0")
         }
-
         jobStartYep = activity.lifecycleScope.launch {
             clickPreviousStatus = App.vpnState
             nowClickState = if (App.vpnState) {
@@ -229,13 +223,12 @@ class MainViewModel : BaseViewModel() {
                 0
             }
             changeOfVpnStatus(activity as MainActivity, 1)
-            delay(2000)
-            connectVpn(activity)
+            connectVpn(activity as MainActivity)
             loadYepAdvertisements(activity)
         }
     }
 
-    private fun connectVpn(activity: MainActivity) {
+   private suspend fun   connectVpn(activity: MainActivity) {
         if (!App.vpnState) {
             if (activity.binding.agreement == 2) {
                 mService?.let {
@@ -243,11 +236,13 @@ class MainViewModel : BaseViewModel() {
                 }
                 Core.stopService()
             } else {
+                delay(2000)
                 mService?.disconnect()
                 Core.startService()
             }
         }
-    }
+
+   }
 
 
     fun disconnectVpn() {
@@ -263,7 +258,7 @@ class MainViewModel : BaseViewModel() {
     private suspend fun loadYepAdvertisements(activity: AppCompatActivity) {
         try {
             withTimeout(10000L) {
-                delay(300L)
+                delay(1000L)
                 while (true) {
                     if (!isActive) {
                         break
@@ -271,7 +266,7 @@ class MainViewModel : BaseViewModel() {
                     when (YepLoadConnectAd.displayConnectAdvertisementYep(
                         activity as MainActivity,
                         closeWindowFun = {
-                            connectOrDisconnectYep(activity,true)
+                            connectOrDisconnectYep(activity, true)
                             BaseAdom.getConnectInstance().advertisementLoadingYep(activity)
                         })) {
                         2 -> {
@@ -305,7 +300,7 @@ class MainViewModel : BaseViewModel() {
             changeOfVpnStatus(activity, 0)
         }
         if (nowClickState == 0) {
-            if(!isOpenJump){
+            if (!isOpenJump) {
                 if (activity.binding.agreement == 2) {
                     return
                 }
@@ -349,8 +344,8 @@ class MainViewModel : BaseViewModel() {
      * 断开服务器
      */
     fun disconnectServerSuccessful(binding: ActivityMainBinding) {
-        Log.e(TAG, "断开服务器")
-        binding.vpnState = 0
+//        Log.e(TAG, "断开服务器")
+//        binding.vpnState = 0
 
     }
 
@@ -523,11 +518,24 @@ class MainViewModel : BaseViewModel() {
             return it == null
         }
     }
-    fun isConnectGuo(activity: MainActivity): Boolean{
-        return !(nowClickState ==0 && activity.binding.vpnState == 1)
+
+    fun isConnectGuo(activity: MainActivity): Boolean {
+        return !(nowClickState == 0 && activity.binding.vpnState == 1)
     }
 
-    fun clickChange(activity: MainActivity,nextFun:()->Unit){
+    fun clickDisConnect(activity: MainActivity, nextFun: () -> Unit) {
+        Log.e(
+            TAG,
+            "clickDisConnect: nowClickState=$nowClickState;activity.binding.vpnState=${activity.binding.vpnState}"
+        )
+        if (nowClickState == 2 && activity.binding.vpnState == 1) {
+            stopOperate(activity)
+        } else {
+            nextFun()
+        }
+    }
+
+    fun clickChange(activity: MainActivity, nextFun: () -> Unit) {
         if (isConnectGuo(activity)) {
             nextFun()
         } else {
@@ -536,6 +544,20 @@ class MainViewModel : BaseViewModel() {
                 "VPN is connecting. Please try again later.",
                 Toast.LENGTH_SHORT
             ).show()
+        }
+    }
+
+    fun stopOperate(activity: MainActivity) {
+        connection.bandwidthTimeout = 0
+        jobStartYep?.cancel() // 取消执行方法的协程
+        jobStartYep = null
+        if (App.vpnState) {
+            Log.e(TAG, "stopOperate: 1", )
+            changeOfVpnStatus(activity, 2)
+        } else {
+            Log.e(TAG, "stopOperate: 2", )
+
+            changeOfVpnStatus(activity, 0)
         }
     }
 }

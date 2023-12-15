@@ -1,6 +1,7 @@
 package how.to.finish.the.project.tricevpn.view.ui
 
 import android.content.Intent
+import android.view.KeyEvent
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import how.to.finish.the.project.tricevpn.base.BaseActivity
@@ -38,6 +39,12 @@ class StartActivity : BaseActivity<BaseViewModel, ActivityStartBinding>() {
             YepOkHttpUtils().getCurrentIp()
             YepOkHttpUtils().getBlackList(this@StartActivity)
         }
+        Thread(Runnable {
+            for (i in 0..100) {
+                binding.progressBarStart.progress = i
+                Thread.sleep(120)
+            }
+        }).start()
         AdUtils.getFileBaseData(this, loadAdFun = {
             loadAdFun()
         })
@@ -97,11 +104,9 @@ class StartActivity : BaseActivity<BaseViewModel, ActivityStartBinding>() {
     //倒计时2秒跳转首页
     override fun onResume() {
         super.onResume()
-        Thread(Runnable {
-            for (i in 0..100) {
-                binding.progressBarStart.progress = i
-                Thread.sleep(100)
-            }
-        }).start()
+
+    }
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return keyCode == KeyEvent.KEYCODE_BACK
     }
 }

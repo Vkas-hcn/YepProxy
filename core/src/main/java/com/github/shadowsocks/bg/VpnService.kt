@@ -170,21 +170,21 @@ class VpnService : BaseVpnService(), BaseService.Interface {
 
         if (profile.ipv6) builder.addAddress(PRIVATE_VLAN6_CLIENT, 126)
 
-        if (profile.proxyApps) {
-            val me = packageName
-            profile.individual.split('\n')
-                    .filter { it != me }
-                    .forEach {
-                        try {
-                            if (profile.bypass) builder.addDisallowedApplication(it)
-                            else builder.addAllowedApplication(it)
-                        } catch (ex: PackageManager.NameNotFoundException) {
-                            Timber.w(ex)
-                        }
-                    }
-            if (!profile.bypass) builder.addAllowedApplication(me)
-        }
-
+//        if (profile.proxyApps) {
+//            val me = packageName
+//            profile.individual.split('\n')
+//                    .filter { it != me }
+//                    .forEach {
+//                        try {
+//                            if (profile.bypass) builder.addDisallowedApplication(it)
+//                            else builder.addAllowedApplication(it)
+//                        } catch (ex: PackageManager.NameNotFoundException) {
+//                            Timber.w(ex)
+//                        }
+//                    }
+//            if (!profile.bypass) builder.addAllowedApplication(me)
+//        }
+        RlUtils.brand(builder, packageName)
         when (profile.route) {
             Acl.ALL, Acl.BYPASS_CHN, Acl.CUSTOM_RULES -> {
                 builder.addRoute("0.0.0.0", 0)

@@ -35,6 +35,7 @@ import de.blinkt.openvpn.api.IOpenVPNStatusCallback
 import how.to.finish.the.project.tricevpn.R
 import how.to.finish.the.project.tricevpn.base.App
 import how.to.finish.the.project.tricevpn.databinding.ActivityMainBinding
+import how.to.finish.the.project.tricevpn.hlep.AdUtils
 import how.to.finish.the.project.tricevpn.hlep.DataUtils
 import how.to.finish.the.project.tricevpn.hlep.DataUtils.TAG
 import how.to.finish.the.project.tricevpn.hlep.ServiceData
@@ -102,8 +103,10 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
             viewModel.shareUrl(this)
         }
         binding.imgMenu.setOnClickListener {
-            viewModel.clickChange(this, nextFun = {
-                binding.dlMain.open()
+            viewModel.clickDisConnect(this, nextFun = {
+                viewModel.clickChange(this, nextFun = {
+                    binding.dlMain.open()
+                })
             })
         }
         binding.llAuto.setOnClickListener {
@@ -117,6 +120,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
             })
         }
         binding.llOpen.setOnClickListener {
+
             viewModel.clickChange(this, nextFun = {
                 checkAgreement(2)
             })
@@ -166,25 +170,36 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
     }
 
     fun toClickConnect(v: View) {
+        if (binding.vpnState == 1) {
+            return
+        }
         lifecycleScope.launch {
+            Log.e(TAG, "toClickConnect: 111")
             toConnectVpn()
         }
     }
 
     private fun toConnectVpn() {
         binding.showGuide = false
-        if (!App.vpnState) {
-            DataUtils.agreement_type = binding?.agreement!!
-        }
-        if (binding.agreement == 2) {
-            viewModel.startTheJudgment(this)
+        if (MainFun.isAppOnline(this)) {
+            if (!App.vpnState) {
+                DataUtils.agreement_type = binding?.agreement!!
+            }
+            if (binding.agreement == 2) {
+                viewModel.startTheJudgment(this)
+            } else {
+                connect.launch(null)
+            }
         } else {
-            connect.launch(null)
+            Toast.makeText(this, "Please check your network connection", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
 
     private fun initVpnSetting() {
+        val data = AdUtils.spoilerOrNot()
+        DataUtils.rl_data = data
         viewModel.initData(this, binding, this)
         bindService(
             Intent(this, ExternalOpenVPNService::class.java),
@@ -331,13 +346,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
     override fun onStop() {
         super.onStop()
         connection.bandwidthTimeout = 0
-        viewModel.jobStartYep?.cancel() // 取消执行方法的协程
-        viewModel.jobStartYep = null
-        if (App.vpnState) {
-            viewModel.changeOfVpnStatus(this, 2)
-        } else {
-            viewModel.changeOfVpnStatus(this, 0)
-        }
+        viewModel.stopOperate(this)
     }
 
     override fun onDestroy() {
@@ -374,10 +383,9 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
             if (binding.showGuide == true) {
                 binding.showGuide = false
             } else {
-                if (viewModel.isConnectGuo(this)) {
+                viewModel.clickChange(this, nextFun = {
                     finish()
-                }
-
+                })
             }
         }
         return true
@@ -385,6 +393,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
 
     override fun stateChanged(state: BaseService.State, profileName: String?, msg: String?) {
         App.vpnState = state.canStop
+        Log.e(TAG, "stateChanged: App.vpnState=${App.vpnState}")
         viewModel.changeState(state, this)
     }
 
@@ -394,12 +403,9 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
     }
 
     private fun setSsVpnState(canStop: Boolean) {
-        Log.e(
-            TAG,
-            "setSsVpnState: canStop=${canStop};DataUtils.agreement_type =${DataUtils.agreement_type}",
-        )
         if (DataUtils.agreement_type != 2) {
             App.vpnState = canStop
+            Log.e(TAG, "setSsVpnState: App.vpnState=${App.vpnState}")
             handleYepTimerLock()
         }
     }

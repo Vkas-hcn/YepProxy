@@ -43,10 +43,6 @@ object YepLoadEndAd {
         vpnNativeAds.withNativeAdOptions(adOptions)
         vpnNativeAds.forNativeAd {
             adBase.appAdDataYep = it
-            it.setOnPaidEventListener {
-                //重新缓存
-//                BaseAd.getEndInstance().advertisementLoadingYep(context)
-            }
         }
         vpnNativeAds.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
@@ -103,6 +99,7 @@ object YepLoadEndAd {
                     adBase.whetherToShowYep = true
                     adBase.appAdDataYep = null
                     Log.d(DataUtils.TAG,"end广告-show。。。")
+                    BaseAdom.getResultInstance().advertisementLoadingYep(activity)
 
                 }
             }

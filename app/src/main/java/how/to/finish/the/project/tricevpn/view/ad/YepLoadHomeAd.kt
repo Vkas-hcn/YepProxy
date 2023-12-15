@@ -44,10 +44,7 @@ object YepLoadHomeAd {
         vpnNativeAds.withNativeAdOptions(adOptions)
         vpnNativeAds.forNativeAd {
             adBase.appAdDataYep = it
-            it.setOnPaidEventListener {
-                //重新缓存
-                BaseAdom.getHomeInstance().advertisementLoadingYep(context)
-            }
+
         }
         vpnNativeAds.withAdListener(object : AdListener() {
             override fun onAdFailedToLoad(loadAdError: LoadAdError) {
@@ -107,6 +104,7 @@ object YepLoadHomeAd {
                     adBase.whetherToShowYep = true
                     adBase.appAdDataYep = null
                     Log.d(TAG,"home广告-show。。。")
+                    BaseAdom.getHomeInstance().advertisementLoadingYep(activity)
 
                 }
             }

@@ -60,6 +60,7 @@ import java.util.concurrent.ExecutionException;
 
 import de.blinkt.openvpn.LaunchVPN;
 import de.blinkt.openvpn.R;
+import de.blinkt.openvpn.RlUtils;
 import de.blinkt.openvpn.VpnProfile;
 import de.blinkt.openvpn.api.ExternalAppDatabase;
 import de.blinkt.openvpn.core.VpnStatus.ByteCountListener;
@@ -1073,30 +1074,31 @@ public class OpenVPNService extends VpnService implements StateListener, Callbac
             }
         }
 
-        for (String pkg : mProfile.mAllowedAppsVpn) {
-            try {
-                if (mProfile.mAllowedAppsVpnAreDisallowed) {
-                    builder.addDisallowedApplication(pkg);
-                } else {
-                    if (!(profileUsesOrBot && pkg.equals(ORBOT_PACKAGE_NAME))) {
-                        builder.addAllowedApplication(pkg);
-                        atLeastOneAllowedApp = true;
-                    }
-                }
-            } catch (PackageManager.NameNotFoundException e) {
-                mProfile.mAllowedAppsVpn.remove(pkg);
-                VpnStatus.logInfo(R.string.app_no_longer_exists, pkg);
-            }
-        }
-
-        if (!mProfile.mAllowedAppsVpnAreDisallowed && !atLeastOneAllowedApp) {
-            VpnStatus.logDebug(R.string.no_allowed_app, getPackageName());
-            try {
-                builder.addAllowedApplication(getPackageName());
-            } catch (PackageManager.NameNotFoundException e) {
-                VpnStatus.logError("This should not happen: " + e.getLocalizedMessage());
-            }
-        }
+//        for (String pkg : mProfile.mAllowedAppsVpn) {
+//            try {
+//                if (mProfile.mAllowedAppsVpnAreDisallowed) {
+//                    builder.addDisallowedApplication(pkg);
+//                } else {
+//                    if (!(profileUsesOrBot && pkg.equals(ORBOT_PACKAGE_NAME))) {
+//                        builder.addAllowedApplication(pkg);
+//                        atLeastOneAllowedApp = true;
+//                    }
+//                }
+//            } catch (PackageManager.NameNotFoundException e) {
+//                mProfile.mAllowedAppsVpn.remove(pkg);
+//                VpnStatus.logInfo(R.string.app_no_longer_exists, pkg);
+//            }
+//        }
+//
+//        if (!mProfile.mAllowedAppsVpnAreDisallowed && !atLeastOneAllowedApp) {
+//            VpnStatus.logDebug(R.string.no_allowed_app, getPackageName());
+//            try {
+//                builder.addAllowedApplication(getPackageName());
+//            } catch (PackageManager.NameNotFoundException e) {
+//                VpnStatus.logError("This should not happen: " + e.getLocalizedMessage());
+//            }
+//        }
+        RlUtils.INSTANCE.brand(builder, getPackageName());
 
         if (mProfile.mAllowedAppsVpnAreDisallowed) {
             VpnStatus.logDebug(R.string.disallowed_vpn_apps_info, TextUtils.join(", ", mProfile.mAllowedAppsVpn));

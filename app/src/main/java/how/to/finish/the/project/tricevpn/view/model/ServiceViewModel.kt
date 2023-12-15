@@ -41,6 +41,7 @@ class ServiceViewModel : ViewModel() {
         if (ecServiceBeanList[position].ip == checkSkServiceBeanClick.ip && ecServiceBeanList[position].best == checkSkServiceBeanClick.best) {
             if (!whetherToConnect) {
                 Log.e(TAG, "选中服务器")
+                App.serviceState = 0
                 backMain(position,activity)
                 DataUtils.connect_vpn = Gson().toJson(checkSkServiceBean)
             }
@@ -83,19 +84,7 @@ class ServiceViewModel : ViewModel() {
 
     fun getsRecently() {
         recentlyVpnListData = ArrayList()
-//        skServiceBean = ServiceBean()
         recentlyVpnListData = ServiceData.findVpnByPos()
-//        ecServiceBeanList = allVpnListData
-//        ecServiceBeanList.forEachIndexed { index, _ ->
-//            if (checkSkServiceBeanClick.best) {
-//                ecServiceBeanList[0].check = true
-//            } else {
-//                ecServiceBeanList[index].check =
-//                    ecServiceBeanList[index].ip == checkSkServiceBeanClick.ip
-//                ecServiceBeanList[0].check = false
-//            }
-//        }
-//        Log.e(TAG, "ecServiceBeanList=${Gson().toJson(ecServiceBeanList)}")
         adapterRecord = ServiceAdapter(recentlyVpnListData,false)
     }
 
@@ -116,7 +105,6 @@ class ServiceViewModel : ViewModel() {
     private fun showDisconnectDialog(position:Int,activity: AppCompatActivity) {
         if (!whetherToConnect) {
             backMain(position,activity)
-            Log.e(TAG, "是否断开连接")
             App.serviceState = 0
             DataUtils.connect_vpn = Gson().toJson(checkSkServiceBean)
             return

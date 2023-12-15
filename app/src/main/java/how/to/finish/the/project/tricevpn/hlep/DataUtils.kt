@@ -95,6 +95,12 @@ object DataUtils {
             field = value
         }
         get() = mmkvDua.decodeInt("agreement_type", 0)
+    var rl_data: Boolean = false
+        set(value) {
+            mmkvDua.encode("rl_data", value)
+            field = value
+        }
+        get() = mmkvDua.decodeBool("rl_data", false) ?: false
     fun String.getServiceFlag(): Int {
         return when (this) {
             "United States" -> R.drawable.us

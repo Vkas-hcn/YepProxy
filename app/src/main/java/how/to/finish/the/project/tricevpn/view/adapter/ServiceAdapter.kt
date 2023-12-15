@@ -79,17 +79,31 @@ class ServiceAdapter(
             holder.aivFlag.setImageResource(item.country.getServiceFlag())
             holder.imgSmart.visibility = View.GONE
         }
-        if (isAll && item.check) {
-            if (App.vpnState) {
-                holder.aivCheck.setImageResource(R.drawable.ic_check)
+        if(!isAll){
+            if (position== 0) {
+                if (App.vpnState) {
+                    holder.aivCheck.setImageResource(R.drawable.ic_check)
+                    holder.llItem.background =
+                        holder.itemView.context.getDrawable(R.drawable.bg_check_item)
+                }
+            } else {
+                holder.aivCheck.setImageResource(R.drawable.ic_dis_check)
                 holder.llItem.background =
-                    holder.itemView.context.getDrawable(R.drawable.bg_check_item)
+                    holder.itemView.context.getDrawable(R.drawable.bg_discheck_item)
             }
-        } else {
+        }
+    if(isAll){
+        if(item.check && App.vpnState){
+            holder.aivCheck.setImageResource(R.drawable.ic_check)
+            holder.llItem.background =
+                holder.itemView.context.getDrawable(R.drawable.bg_check_item)
+        }else{
             holder.aivCheck.setImageResource(R.drawable.ic_dis_check)
             holder.llItem.background =
                 holder.itemView.context.getDrawable(R.drawable.bg_discheck_item)
         }
+    }
+
 
     }
 
