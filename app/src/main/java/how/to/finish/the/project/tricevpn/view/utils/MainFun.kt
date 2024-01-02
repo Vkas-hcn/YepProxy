@@ -67,10 +67,10 @@ object MainFun {
     }
 
     fun isLegalIpAddress(activity: AppCompatActivity): Boolean {
-        if (whetherParsingIsIllegalIp()) {
-            whetherTheBulletBoxCannotBeUsed(activity)
-            return true
-        }
+//        if (whetherParsingIsIllegalIp()) {
+//            whetherTheBulletBoxCannotBeUsed(activity)
+//            return true
+//        }
         return false
     }
 

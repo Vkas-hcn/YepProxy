@@ -43,4 +43,4 @@
 -keep public class android.webkit.WebView
 -keep public class android.net.http.SslError
 -keep public class android.webkit.WebViewClient
--keep class how.to.finish.the.project.tricevpn.dataaaaaa.SunProfile { *; }
+-keep class how.to.finish.the.project.tricevpn.hlep.YepLogicBean { *; }
