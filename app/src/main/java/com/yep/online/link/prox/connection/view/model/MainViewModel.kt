@@ -5,8 +5,10 @@ import android.content.Intent
 import android.net.Uri
 import android.net.VpnService
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
@@ -129,10 +131,6 @@ class MainViewModel : BaseViewModel() {
         binding: ActivityMainBinding,
         call: ShadowsocksConnection.Callback
     ) {
-//        if (MainFun.isIllegalIp()) {
-//            MainFun.isBulletBoxUsed(activity)
-//            return
-//        }
 
         // 设置状态
         changeState(BaseService.State.Idle, activity)
@@ -203,7 +201,16 @@ class MainViewModel : BaseViewModel() {
             binding.tvCountry.text = meteorVpnBean.country
         }
     }
-
+    fun startOpenVpn(activity: MainActivity) {
+        val state = checkVPNPermission(activity)
+        if (state) {
+            startTheJudgment(activity)
+        } else {
+            VpnService.prepare(activity).let {
+                requestPermissionForResultVPN.launch(it)
+            }
+        }
+    }
     fun startTheJudgment(activity: AppCompatActivity) {
         startVpn(activity)
     }
@@ -487,7 +494,6 @@ class MainViewModel : BaseViewModel() {
     }
 
     fun step2(activity: MainActivity, server: IOpenVPNAPIService): Job? {
-        if (checkVPNPermission(activity)) {
             val job = MainScope().launch(Dispatchers.IO) {
                 val data = DataUtils.vpn_ip
                 runCatching {
@@ -516,29 +522,25 @@ class MainViewModel : BaseViewModel() {
                 }
             }
             return job
-        } else {
-            VpnService.prepare(activity).let {
-                requestPermissionForResultVPN.launch(it)
-            }
-        }
+
         return null
     }
 
 
     private fun connectFailedFun(activity: MainActivity) {
-            Log.e(TAG, "connectFailedFun: ${nowClickState}")
-            if (nowClickState == 0 && !App.vpnState) {
-                activity.lifecycleScope.launch(Dispatchers.Main) {
-                    Toast.makeText(activity, "VPN connection failed", Toast.LENGTH_SHORT).show()
-                    changeOfVpnStatus(activity,0)
-                }
-                Log.d(TAG, "vpn连接失败")
-                CloakUtils.putPointYep("vpndissicc", activity)
+        Log.e(TAG, "connectFailedFun: ${nowClickState}")
+        if (nowClickState == 0 && !App.vpnState) {
+            activity.lifecycleScope.launch(Dispatchers.Main) {
+                Toast.makeText(activity, "VPN connection failed", Toast.LENGTH_SHORT).show()
+                changeOfVpnStatus(activity, 0)
             }
-            if (nowClickState == 0 && App.vpnState) {
-                Log.d(TAG, "vpn连接成功")
-                CloakUtils.putPointYep("vpnsucc", activity)
-            }
+            Log.d(TAG, "vpn连接失败")
+            CloakUtils.putPointYep("vpndissicc", activity)
+        }
+        if (nowClickState == 0 && App.vpnState) {
+            Log.d(TAG, "vpn连接成功")
+            CloakUtils.putPointYep("vpnsucc", activity)
+        }
 
     }
 

@@ -37,14 +37,15 @@ object YepLoadBackAd {
     private fun interstitialAdLoadCallback(context: Context): InterstitialAdLoadCallback {
         return object : InterstitialAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                adError.toString().let {
-                    Log.d( TAG,"back---连接插屏加载失败=$it")
-                }
+                val error =
+                    """
+           domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}
+          """"
                 adBase.isLoadingYep = false
                 adBase.appAdDataYep = null
                 CloakUtils.putPointTimeYep(
                     "adloaddissucc",
-                    "back",
+                    error,
                     "yn",
                     context
                 )

@@ -1,9 +1,12 @@
 package com.yep.online.link.prox.connection.hlep
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.yep.online.link.prox.connection.hlep.DataUtils.TAG
 import com.yep.online.link.prox.connection.net.YepOkHttpUtils
+import timber.log.Timber
 
 object ServiceData {
     //本地买量数据
@@ -36,35 +39,10 @@ object ServiceData {
 }
     """.trimIndent()
 
-    val ss_vpn_list = """
-        WwogICAgewogICAgICAgICJ3ZXJ5ZXAiOiAiajl4S0RKZDcxdXJFUGJneWxjNjJCWkgiLAogICAgICAgICJ1cmV5ZXAiOiAiY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSIsCiAgICAgICAgImFycnllcCI6ICI5NjQxIiwKICAgICAgICAidmVyeXllcCI6ICJVbml0ZWQgU3RhdGVzIiwKICAgICAgICAic2NpZW50eWVwIjogIk1pYW1pIiwKICAgICAgICAic3RmdWx5ZXAiOiAiNDMuMjMxLjIzNC44MSIKICAgIH0sCiAgICB7CiAgICAgICAgIndlcnllcCI6ICJqOXhLREpkNzF1ckVQYmd5bGM2MkJaSCIsCiAgICAgICAgInVyZXllcCI6ICJjaGFjaGEyMC1pZXRmLXBvbHkxMzA1IiwKICAgICAgICAiYXJyeWVwIjogIjk2NDEiLAogICAgICAgICJ2ZXJ5eWVwIjogIkdlcm1hbnkiLAogICAgICAgICJzY2llbnR5ZXAiOiAiTG9uZG9uIiwKICAgICAgICAic3RmdWx5ZXAiOiAiMTg1LjUzLjIxMS4xNjkiCiAgICB9LAogICAgewogICAgICAgICJ3ZXJ5ZXAiOiAiajl4S0RKZDcxdXJFUGJneWxjNjJCWkgiLAogICAgICAgICJ1cmV5ZXAiOiAiY2hhY2hhMjAtaWV0Zi1wb2x5MTMwNSIsCiAgICAgICAgImFycnllcCI6ICI5NjQzIiwKICAgICAgICAidmVyeXllcCI6ICJrb3JlYXNvdXRoIiwKICAgICAgICAic2NpZW50eWVwIjogIlNlb3VsIiwKICAgICAgICAic3RmdWx5ZXAiOiAiNDMuMjMxLjIzNC44MyIKICAgIH0sCiAgICB7CiAgICAgICAgIndlcnllcCI6ICJqOXhLREpkNzF1ckVQYmd5bGM2MkJaSCIsCiAgICAgICAgInVyZXllcCI6ICJjaGFjaGEyMC1pZXRmLXBvbHkxMzA1IiwKICAgICAgICAiYXJyeWVwIjogIjk2NDQiLAogICAgICAgICJ2ZXJ5eWVwIjogIlNpbmdhcG9yZSIsCiAgICAgICAgInNjaWVudHllcCI6ICJTaW5nYXBvcmUiLAogICAgICAgICJzdGZ1bHllcCI6ICI0My4yMzEuMjM0Ljg0IgogICAgfQpd
-    """.trimIndent()
-
-    val vpn_fast = """
-        WwoiNDMuMjMxLjIzNC44MSIKXQ==
-    """.trimIndent()
-
 
     //base64解密
     fun decodeBase64(str: String): String {
         return String(android.util.Base64.decode(str, android.util.Base64.DEFAULT))
-    }
-
-
-    //解析vpn列表
-    fun getVpnList(): MutableList<ServiceBean> {
-        val jsonString = DataUtils.vpn_list.ifEmpty {
-            decodeBase64(ss_vpn_list)
-        }
-        return try {
-            Gson().fromJson(jsonString, object : TypeToken<ArrayList<ServiceBean>>() {}.type)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Gson().fromJson(
-                decodeBase64(ss_vpn_list),
-                object : TypeToken<ArrayList<ServiceBean>>() {}.type
-            )
-        }
     }
 
 
@@ -143,9 +121,10 @@ object ServiceData {
 
     fun getAllVpnListData(): MutableList<ServiceBean> {
         val list = getDataFromTheServer()
-        list?.add(getFastVpnOnLine())
-        list?.addAll(getVpnList())
-        return list ?: getVpnList()
+        val data = Gson().toJson(list)
+        Log.e(TAG, "getAllVpnListData: ${data}", )
+        list?.add(0, getFastVpnOnLine())
+        return list ?: local
     }
 
     private val local = listOf(
@@ -162,11 +141,25 @@ object ServiceData {
     ).toMutableList()
 
     fun getFastVpnOnLine(): ServiceBean {
-        val ufVpnBean: MutableList<ServiceBean> = getDataFastServerData() ?: local
-        return ufVpnBean.shuffled().first().apply {
-            best = true
-            smart = true
-            country = "Fast Server"
+        val ufVpnBean: MutableList<ServiceBean>? = getDataFastServerData()
+        if (ufVpnBean == null) {
+            val data = getDataFromTheServer()?.getOrNull(0)
+            return ServiceBean(
+                city = data?.city.toString(),
+                country = data?.country.toString(),
+                ip = data?.ip.toString(),
+                agreement = data?.agreement.toString(),
+                port = data?.port.toString(),
+                password = data?.password.toString(),
+                check = false,
+                best = true
+            )
+        } else {
+            return ufVpnBean.shuffled().first().apply {
+                best = true
+                smart = true
+                country = "Fast Server"
+            }
         }
     }
 
@@ -190,8 +183,11 @@ object ServiceData {
         val data = DataUtils.vpn_online
         return runCatching {
             val spinVpnBean = Gson().fromJson(data, OnlineVpnBean::class.java)
-            if (spinVpnBean?.data?.fdbTNoDnP?.isNotEmpty() == true) {
-                spinVpnBean.data.fdbTNoDnP.map {
+            val data = spinVpnBean.data.fdbTNoDnP
+            val data2 = data.distinctBy { it.FpEEFA }
+            Timber.tag(TAG).e("data=${data}")
+            if (data2.isNotEmpty()) {
+                data2.map {
                     ServiceBean().apply {
                         ip = it.FpEEFA
                         best = false
@@ -214,8 +210,10 @@ object ServiceData {
         val data = DataUtils.vpn_online
         return runCatching {
             val spinVpnBean = Gson().fromJson(data, OnlineVpnBean::class.java)
-            if (spinVpnBean?.data?.tvxF?.isNotEmpty() == true) {
-                spinVpnBean.data.tvxF.map {
+            val data = spinVpnBean.data.tvxF
+            val data2 = data.distinctBy { it.FpEEFA }
+            if (data.isNotEmpty()) {
+                data2.distinctBy { it.FpEEFA }.map {
                     ServiceBean().apply {
                         ip = it.FpEEFA
                         best = false

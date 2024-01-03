@@ -54,17 +54,20 @@ object YepLoadOpenAd {
                     )
                 }
 
-                override fun onAdFailedToLoad(loadAdError: LoadAdError) {
+                override fun onAdFailedToLoad(adError: LoadAdError) {
                     adBase.isLoadingYep = false
                     adBase.appAdDataYep = null
-                    Log.d(TAG, "open-加载失败 ")
+                    val error =
+                        """
+           domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}
+          """"
                     if (!isFirstLoad) {
                         adBase.advertisementLoadingYep(context)
                         isFirstLoad = true
                     }
                     CloakUtils.putPointTimeYep(
                         "adloaddissucc",
-                        "open",
+                        error,
                         "yn",
                         context
                     )

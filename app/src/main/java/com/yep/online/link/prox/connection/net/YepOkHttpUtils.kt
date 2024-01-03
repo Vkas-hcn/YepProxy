@@ -196,12 +196,17 @@ class YepOkHttpUtils {
 
 
     fun getVpnData(context: Context) {
+        CloakUtils.putPointYep("ye_qq", context)
+        val date = System.currentTimeMillis()
         try {
             client.get(context, DataUtils.vpn_url, object : OkHttpClientUtils.Callback {
                 override fun onSuccess(response: String) {
                     val responseData = processResponse(response)
                     DataUtils.vpn_online = responseData
                     Timber.tag(TAG).e("获取下发服务器数据-成功->" + DataUtils.vpn_online)
+                    CloakUtils.putPointYep("ye_hq", context)
+                    val date2 = (System.currentTimeMillis()-date)/1000
+                    CloakUtils.putPointTimeYep("ye_tm", date2,"time",context)
                 }
 
                 override fun onFailure(error: String) {

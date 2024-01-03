@@ -33,10 +33,14 @@ object YepLoadConnectAd {
                 override fun onAdFailedToLoad(adError: LoadAdError) {
                     adBase.isLoadingYep = false
                     adBase.appAdDataYep = null
+                    val error =
+                        """
+           domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}
+          """"
                     Log.d(TAG, "connect-加载失败 ")
                     CloakUtils.putPointTimeYep(
                         "adloaddissucc",
-                        "connect",
+                        error,
                         "yn",
                         context
                     )

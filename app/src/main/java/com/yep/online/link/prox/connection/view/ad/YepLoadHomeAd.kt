@@ -53,14 +53,17 @@ object YepLoadHomeAd {
             }
         }
         vpnNativeAds.withAdListener(object : AdListener() {
-            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                super.onAdFailedToLoad(loadAdError)
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                super.onAdFailedToLoad(adError)
                 adBase.isLoadingYep = false
                 adBase.appAdDataYep = null
-                Log.d(TAG, "home-Failed to load ")
+                val error =
+                    """
+           domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}
+          """"
                 CloakUtils.putPointTimeYep(
                     "adloaddissucc",
-                    "home",
+                    error,
                     "yn",
                     context
                 )

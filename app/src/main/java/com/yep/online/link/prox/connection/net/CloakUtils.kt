@@ -26,6 +26,7 @@ import com.yep.online.link.prox.connection.hlep.YepAdBean
 import org.json.JSONObject
 import java.util.Locale
 import java.util.TimeZone
+import java.util.UUID
 
 object CloakUtils {
 
@@ -61,7 +62,7 @@ object CloakUtils {
         // cocoa
         val cocoa = JSONObject()
         //log_id
-        cocoa.put("arcsin", DataUtils.uu0d_yep)
+        cocoa.put("arcsin", UUID.randomUUID().toString())
         //cpu_name
         cocoa.put("pursue", Build.SUPPORTED_ABIS.joinToString(", "))
         //os
@@ -76,7 +77,10 @@ object CloakUtils {
         //client_ts
         cocoa.put("pariah", System.currentTimeMillis())
         //gaid
-        cocoa.put("taxicab", "")
+        cocoa.put(
+            "taxicab",
+            (runCatching { AdvertisingIdClient.getAdvertisingIdInfo(context).id }.getOrNull() ?: "")
+        )
         //operator
         cocoa.put("slurp", getNetworkInfo(context))
         //key
@@ -161,53 +165,63 @@ object CloakUtils {
         val topLevelJson = createJsonData(context)
         val hemlock = JSONObject()
         hemlock.put("ad_network", responseInfo.mediationAdapterClassName)
-            //ad_pre_ecpm
+        //ad_pre_ecpm
         hemlock.put("devise", adValue.valueMicros)
-            //currency
+        //currency
         hemlock.put("collapse", adValue.currencyCode)
-            //ad_network
+        //ad_network
         hemlock.put(
-                "knowlton",
-                responseInfo.mediationAdapterClassName
-            )
-            //ad_source
+            "knowlton",
+            responseInfo.mediationAdapterClassName
+        )
+        //ad_source
         hemlock.put("caliper", "admob")
-            //ad_code_id
+        //ad_code_id
         hemlock.put("score", getAdType(type).id)
-            //ad_pos_id
+        //ad_pos_id
         hemlock.put("posable", getAdType(type).name)
-            //ad_rit_id
+        //ad_rit_id
         hemlock.put("drunken", "")
-            //ad_sense
+        //ad_sense
         hemlock.put("wee", "")
-            //ad_format
+        //ad_format
         hemlock.put("jubilate", getAdType(type).type)
-            //precision_type
+        //precision_type
         hemlock.put("holeable", getPrecisionType(adValue.precisionType))
-            //ad_load_ip
+        //ad_load_ip
         hemlock.put("woodlot", yepAdBean.loadIp ?: "")
-            //ad_impression_ip
+        //ad_impression_ip
         hemlock.put("lansing", yepAdBean.showIp ?: "")
-        hemlock.put("david@rid_yawn", yepAdBean.loadCity)
-        hemlock.put("david@rid_fist", yepAdBean.showTheCity)
-            //ad_sdk_ver
+
+        //ad_sdk_ver
         hemlock.put("impale", responseInfo.responseId)
         topLevelJson.put("hemlock", hemlock)
+        topLevelJson.put("david@rid_yawn", yepAdBean.loadCity)
+        topLevelJson.put("david@rid_fist", yepAdBean.showTheCity)
+
         return topLevelJson.toString()
     }
-    fun getTbaDataJson(context: Context,name:String): String {
+
+    fun getTbaDataJson(context: Context, name: String): String {
         return createJsonData(context).apply {
             put("sigmund", name)
         }.toString()
     }
-    fun getTbaTimeDataJson(context: Context,time:Any,name:String,parameterName:String): String {
+
+    fun getTbaTimeDataJson(
+        context: Context,
+        time: Any,
+        name: String,
+        parameterName: String
+    ): String {
         val data = JSONObject()
         data.put(parameterName, time)
         return createJsonData(context).apply {
-            put("sigmund",name)
-            put("${parameterName}_sinewy",time)
+            put("sigmund", name)
+            put("${parameterName}_sinewy", time)
         }.toString()
     }
+
     @SuppressLint("HardwareIds")
     fun cloakJson(activity: AppCompatActivity): Map<String, Any> {
         return mapOf<String, Any>(
@@ -222,7 +236,8 @@ object CloakUtils {
             //os_version
             "aiken" to Build.VERSION.RELEASE,
             //gaid
-            "taxicab" to "",
+            "taxicab" to (runCatching { AdvertisingIdClient.getAdvertisingIdInfo(activity).id }.getOrNull()
+                ?: ""),
             //android_id
             "terrify" to Settings.Secure.getString(
                 activity.contentResolver,
@@ -384,6 +399,7 @@ object CloakUtils {
         }
         return yepAdBean
     }
+
     fun afterLoadLink(yepAdBean: YepAdBean): YepAdBean {
         val ipAfterVpnLink = DataUtils.vpn_ip
         val ipAfterVpnCity = DataUtils.vpn_city
@@ -397,19 +413,19 @@ object CloakUtils {
         return yepAdBean
     }
 
-    fun putPointYep(name: String,context: Context) {
-        YepOkHttpUtils().getTbaList(context,name)
+    fun putPointYep(name: String, context: Context) {
+        YepOkHttpUtils().getTbaList(context, name)
         if (com.yep.online.link.prox.connection.BuildConfig.DEBUG) {
-            Log.d(TAG,"触发埋点----name=${name}")
+            Log.d(TAG, "触发埋点----name=${name}")
         } else {
             Firebase.analytics.logEvent(name, null)
         }
     }
 
-    fun putPointTimeYep(name: String, time: Any,parameterName:String,context: Context) {
-        YepOkHttpUtils().getTbaList(context,name,parameterName, time, 1)
+    fun putPointTimeYep(name: String, time: Any, parameterName: String, context: Context) {
+        YepOkHttpUtils().getTbaList(context, name, parameterName, time, 1)
         if (com.yep.online.link.prox.connection.BuildConfig.DEBUG) {
-            Log.d(TAG,"触发埋点----name=${name}---time=${time}")
+            Log.d(TAG, "触发埋点----name=${name}---time=${time}")
         } else {
             Firebase.analytics.logEvent(name, bundleOf(parameterName to time))
         }

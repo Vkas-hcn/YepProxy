@@ -52,14 +52,17 @@ object YepLoadEndAd {
             }
         }
         vpnNativeAds.withAdListener(object : AdListener() {
-            override fun onAdFailedToLoad(loadAdError: LoadAdError) {
-                super.onAdFailedToLoad(loadAdError)
+            override fun onAdFailedToLoad(adError: LoadAdError) {
+                super.onAdFailedToLoad(adError)
                 adBase.isLoadingYep = false
                 adBase.appAdDataYep = null
-                Log.d(DataUtils.TAG, "end-Failed to load ")
+                val error =
+                    """
+           domain: ${adError.domain}, code: ${adError.code}, message: ${adError.message}
+          """"
                 CloakUtils.putPointTimeYep(
                     "adloaddissucc",
-                    "end",
+                    error,
                     "yn",
                     context
                 )

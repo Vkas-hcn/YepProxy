@@ -69,14 +69,14 @@ object MainFun {
     }
 
     fun isLegalIpAddress(activity: AppCompatActivity): Boolean {
-//        if (whetherParsingIsIllegalIp()) {
-//            whetherTheBulletBoxCannotBeUsed(activity)
-//            return true
-//        }
+        if (whetherParsingIsIllegalIp()) {
+            whetherTheBulletBoxCannotBeUsed(activity)
+            return true
+        }
         return false
     }
 
-    fun whetherParsingIsIllegalIp(): Boolean {
+    private fun whetherParsingIsIllegalIp(): Boolean {
         val data = DataUtils.ip_data
         Log.e(TAG, "whetherParsingIsIllegalIp: ${data}")
         return if (data.isEmpty()) {

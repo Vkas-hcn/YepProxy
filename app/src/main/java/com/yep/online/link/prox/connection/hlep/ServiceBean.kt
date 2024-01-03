@@ -7,23 +7,21 @@ import java.io.Serializable
 
 @Keep
 data class ServiceBean(
-    @SerializedName("weryep")
     var password: String="",
+    var passwordOpen: String="",
 
-    @SerializedName("arryep")
     var port: String="",
+    var portOpen: String="",
 
-    @SerializedName("ureyep")
     var agreement: String="",
+    var agreementOpen: String="",
 
-    @SerializedName("veryyep")
     var country: String="",
 
-    @SerializedName("scientyep")
     var city: String="",
 
-    @SerializedName("stfulyep")
     var ip: String="",
+
 
     var best: Boolean =false,
     var smart: Boolean=false,
@@ -67,3 +65,5 @@ data class TvxF(
     val oqjYzgx: String,
     val zbQy: String
 )
+
+

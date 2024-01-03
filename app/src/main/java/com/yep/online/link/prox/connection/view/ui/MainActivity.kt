@@ -212,19 +212,17 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
         if (binding.showLoading == true) {
             return
         }
-        clickConnectFun(v)
-
-//        if (ServiceData.deliverServerTransitions(this)) {
-//            clickConnectFun(v)
-//            binding.showLoading = false
-//        } else {
-//            lifecycleScope.launch {
-//                binding.showLoading = true
-//                ServiceData.deliverServerTransitions(this@MainActivity)
-//                delay(2000)
-//                binding.showLoading = false
-//            }
-//        }
+        if (ServiceData.deliverServerTransitions(this)) {
+            clickConnectFun(v)
+            binding.showLoading = false
+        } else {
+            lifecycleScope.launch {
+                binding.showLoading = true
+                ServiceData.deliverServerTransitions(this@MainActivity)
+                delay(2000)
+                binding.showLoading = false
+            }
+        }
     }
 
 
@@ -243,12 +241,13 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
     }
 
     private fun toConnectVpn() {
+
         if (MainFun.isAppOnline(this)) {
             if (!App.vpnState) {
                 DataUtils.agreement_type = binding?.agreement!!
             }
             if (binding.agreement == 2) {
-                viewModel.startTheJudgment(this)
+                viewModel.startOpenVpn(this)
             } else {
                 connect.launch(null)
             }

@@ -3,6 +3,7 @@ package com.yep.online.link.prox.connection.view.ui
 import android.content.Intent
 import android.view.KeyEvent
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import com.yep.online.link.prox.connection.base.BaseActivity
 import com.yep.online.link.prox.connection.base.BaseViewModel
@@ -27,7 +28,7 @@ class StartActivity : BaseActivity<BaseViewModel, ActivityStartBinding>() {
     private var jobOpenAdsYep: Job? = null
     private var startCateYep: Job? = null
     var progressInt = 0
-
+    var jumpToMainLiveData = MutableLiveData<Boolean>()
     override fun getLayoutRes(): Int = R.layout.activity_start
 
     override fun getViewModelClass(): Class<BaseViewModel> = BaseViewModel::class.java
@@ -52,6 +53,7 @@ class StartActivity : BaseActivity<BaseViewModel, ActivityStartBinding>() {
             loadAdFun()
             identificationOfBuyingVolume()
         })
+        jumpToMainLiveDataFUn()
     }
 
     private fun identificationOfBuyingVolume() {
@@ -105,7 +107,15 @@ class StartActivity : BaseActivity<BaseViewModel, ActivityStartBinding>() {
     }
 
     private fun startToMain() {
-        if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+        lifecycleScope.launch {
+            delay(300)
+            if (lifecycle.currentState == Lifecycle.State.RESUMED) {
+                jumpToMainLiveData.value = true
+            }
+        }
+    }
+    private fun jumpToMainLiveDataFUn(){
+        jumpToMainLiveData.observe(this) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
             finish()

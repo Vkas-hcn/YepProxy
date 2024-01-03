@@ -64,8 +64,8 @@
 
             <ImageView
                 android:id="@+id/imageView2"
-                android:layout_width="336dp"
-                android:layout_height="336dp"
+                android:layout_width="236dp"
+                android:layout_height="236dp"
                 android:onClick="toClickConnect"
                 android:src="@{vpnState != 2 ? @drawable/ic_main_service : @drawable/ic_main_service_con}"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -348,8 +348,8 @@
 
             <View
                 android:id="@+id/view_click"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:onClick="toClickConnect"
                 android:visibility="@{showGuide ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView2"
@@ -358,8 +358,8 @@
                 app:layout_constraintTop_toBottomOf="@+id/atv_time" />
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/lottieGuide"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:onClick="toClickConnect"
                 android:visibility="@{showGuide ? View.VISIBLE : View.GONE}"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView2"
