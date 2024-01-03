@@ -20,14 +20,17 @@
             name="showGuide"
             type="Boolean"
             android:value="false" />
-
+        <variable
+            name="showLoading"
+            type="Boolean"
+            android:value="false" />
         <variable
             name="vpnState"
             type="Integer"
             android:value="0" />
         <variable
             name="viewModel"
-            type="how.to.finish.the.project.tricevpn.view.model.MainViewModel" />
+            type="com.yep.online.link.prox.connection.view.model.MainViewModel" />
     </data>
     <androidx.drawerlayout.widget.DrawerLayout
         android:id="@+id/dl_main"
@@ -118,6 +121,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linearLayout"
                 android:layout_width="match_parent"
                 android:layout_height="32dp"
                 android:layout_marginStart="20dp"
@@ -364,6 +368,15 @@
                 app:lottie_autoPlay="true"
                 app:lottie_fileName="yd.json" />
 
+            <ProgressBar
+                android:id="@+id/pb_main_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{showLoading ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="240dp"

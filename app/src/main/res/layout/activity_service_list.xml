@@ -16,6 +16,11 @@
             name="isLoading"
             type="Boolean"
             android:value="false" />
+
+        <variable
+            name="isEmoryAllData"
+            type="Boolean"
+            android:value="false" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -73,6 +78,7 @@
             android:textColor="#FFFFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:visibility="@{isEmoryAllData ? View.GONE : View.VISIBLE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
@@ -90,6 +96,8 @@
             android:paddingTop="20dp"
             android:paddingEnd="16dp"
             android:paddingBottom="20dp"
+            android:visibility="@{isEmoryAllData ? View.GONE : View.VISIBLE}"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2">
@@ -133,6 +141,8 @@
             android:textColor="#FFFFFFFF"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:visibility="@{isEmoryAllData ? View.GONE : View.VISIBLE}"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cl_recently_connected" />
 
@@ -150,6 +160,7 @@
             android:paddingTop="20dp"
             android:paddingEnd="16dp"
             android:paddingBottom="20dp"
+            android:visibility="@{isEmoryAllData ? View.GONE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -164,6 +175,18 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <TextView
+            android:id="@+id/tv_empty_data"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:text="Empty data"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:visibility="@{isEmoryAllData ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView" />
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

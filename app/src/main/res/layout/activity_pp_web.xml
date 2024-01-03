@@ -5,7 +5,7 @@
     <data>
     <variable
         name="viewModel"
-        type="how.to.finish.the.project.tricevpn.base.BaseViewModel" />
+        type="com.yep.online.link.prox.connection.base.BaseViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
