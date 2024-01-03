@@ -124,17 +124,20 @@ class YepOkHttpUtils {
         try {
             client.post(DataUtils.tab_url, data, object : OkHttpClientUtils.Callback {
                 override fun onSuccess(response: String) {
-                    Log.e(TAG, "Session_data----->${response}")
+                    Log.e(TAG, "Install 事件上报成功----->${response}")
                     DataUtils.refer_tab = true
                 }
 
                 override fun onFailure(error: String) {
                     DataUtils.refer_tab = false
+                    Log.e(TAG, "Install事件上报失败----->${error}")
 
                 }
             })
         } catch (e: Exception) {
             DataUtils.refer_tab = false
+            Log.e(TAG, "Install事件上报失败----->${e}")
+
         }
     }
 

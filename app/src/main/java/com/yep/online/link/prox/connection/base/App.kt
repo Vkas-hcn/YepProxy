@@ -79,24 +79,24 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        com.yep.online.link.prox.connection.base.App.Companion.nums.add(activity)
+        nums.add(activity)
 
     }
 
     override fun onActivityStarted(activity: Activity) {
-        com.yep.online.link.prox.connection.base.App.Companion.num++
+        num++
         if (activity is AdActivity) {
             adActivity = activity
         }
-        if (com.yep.online.link.prox.connection.base.App.Companion.startState) {
-            com.yep.online.link.prox.connection.base.App.Companion.startState = false
-            if ((System.currentTimeMillis() - com.yep.online.link.prox.connection.base.App.Companion.timeData) / 1000 > 3) {
+        if (startState) {
+            startState = false
+            if ((System.currentTimeMillis() - timeData) / 1000 > 3) {
                 val intent = Intent(activity, StartActivity::class.java)
                 activity.startActivity(intent)
                 if (adActivity != null) adActivity?.finish()
                 if (activity is StartActivity) activity.finish()
-                com.yep.online.link.prox.connection.base.BaseAdom.Companion.getHomeInstance().whetherToShowYep = false
-                com.yep.online.link.prox.connection.base.BaseAdom.Companion.getResultInstance().whetherToShowYep = false
+                BaseAdom.getHomeInstance().whetherToShowYep = false
+                BaseAdom.getResultInstance().whetherToShowYep = false
                 CloakUtils.putPointYep("hotStart", activity)
             }
         }
@@ -111,10 +111,10 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityStopped(activity: Activity) {
-        com.yep.online.link.prox.connection.base.App.Companion.num--
-        if (com.yep.online.link.prox.connection.base.App.Companion.num == 0) {
-            com.yep.online.link.prox.connection.base.App.Companion.startState = true
-            com.yep.online.link.prox.connection.base.App.Companion.timeData = System.currentTimeMillis()
+        num--
+        if (num == 0) {
+            startState = true
+            timeData = System.currentTimeMillis()
         }
     }
 
@@ -123,7 +123,7 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
     }
 
     override fun onActivityDestroyed(activity: Activity) {
-        com.yep.online.link.prox.connection.base.App.Companion.nums.remove(activity)
+        Companion.nums.remove(activity)
     }
 
     private fun getReferInformation(context: Context) {
@@ -147,8 +147,8 @@ class App : Application(), Application.ActivityLifecycleCallbacks {
             return
         }
 //        installReferrer = "gclid"
-        installReferrer = "fb4a"
-        DataUtils.refer_data = installReferrer
+//        installReferrer = "fb4a"
+//        DataUtils.refer_data = installReferrer
         runCatching {
             val referrerClient = InstallReferrerClient.newBuilder(context).build()
             referrerClient.startConnection(object : InstallReferrerStateListener {

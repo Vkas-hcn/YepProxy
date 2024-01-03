@@ -147,6 +147,7 @@ object CloakUtils {
 
             //google_play_instant
             put("oratoric", rd.googlePlayInstantParam)
+            put("sigmund", "tucson")
         }
         return topLevelJson.toString()
     }

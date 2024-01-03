@@ -212,17 +212,19 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(),
         if (binding.showLoading == true) {
             return
         }
-        if (ServiceData.deliverServerTransitions(this)) {
-            clickConnectFun(v)
-            binding.showLoading = false
-        } else {
-            lifecycleScope.launch {
-                binding.showLoading = true
-                ServiceData.deliverServerTransitions(this@MainActivity)
-                delay(2000)
-                binding.showLoading = false
-            }
-        }
+        clickConnectFun(v)
+
+//        if (ServiceData.deliverServerTransitions(this)) {
+//            clickConnectFun(v)
+//            binding.showLoading = false
+//        } else {
+//            lifecycleScope.launch {
+//                binding.showLoading = true
+//                ServiceData.deliverServerTransitions(this@MainActivity)
+//                delay(2000)
+//                binding.showLoading = false
+//            }
+//        }
     }
 
 

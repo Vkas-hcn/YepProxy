@@ -22,7 +22,7 @@ object ServiceData {
     //本地广告逻辑
     const val local_yep_logic = """
 {
-    "coronyer": "3",
+    "coronyer": "1",
     "lieayer": "2",
     "toryyer": "2"
 }    """
@@ -160,32 +160,6 @@ object ServiceData {
             best = false
         )
     ).toMutableList()
-//    fun getFastVpn(): ServiceBean {
-//        val jsonString= DataUtils.vpn_fast.ifEmpty {
-//            decodeBase64(vpn_fast)
-//        }
-//
-//        val fast = try {
-//            Gson().fromJson<ArrayList<String>>(jsonString, object : TypeToken<ArrayList<String>>() {}.type)
-//        } catch (e: Exception) {
-//            e.printStackTrace()
-//            Gson().fromJson(decodeBase64(vpn_fast), object : TypeToken<ArrayList<String>>() {}.type)
-//        }
-//        var bean = ServiceBean("","","","","","",
-//            best = true,
-//            smart = true,
-//            check = false
-//        )
-//        getVpnList().forEach {
-//            if (fast.getOrNull(0) == it.ip) {
-//                bean = it
-//                bean.best = true
-//                bean.smart = true
-//                bean.country = "Fast Server"
-//            }
-//        }
-//        return bean
-//    }
 
     fun getFastVpnOnLine(): ServiceBean {
         val ufVpnBean: MutableList<ServiceBean> = getDataFastServerData() ?: local
