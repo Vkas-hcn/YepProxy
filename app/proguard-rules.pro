@@ -44,3 +44,6 @@
 -keep public class android.net.http.SslError
 -keep public class android.webkit.WebViewClient
 -keep class com.yep.online.link.prox.connection.hlep.YepLogicBean { *; }
+-keep class com.yep.online.link.prox.connection.hlep.Data { *; }
+-keep class com.yep.online.link.prox.connection.hlep.FdbTNoDnP { *; }
+-keep class com.yep.online.link.prox.connection.hlep.TvxF { *; }
